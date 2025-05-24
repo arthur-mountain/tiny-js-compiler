@@ -6,3 +6,5 @@ const compiler = (sourceCode: string) => {
 };
 
 compiler("let x = 5;");
+compiler("let str = 'compilerrrr'");
+compiler('let str = "compilerrrr"');

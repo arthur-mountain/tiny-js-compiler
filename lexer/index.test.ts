@@ -1,30 +1,8 @@
 import assert from "node:assert";
+import testcases from "./testcases/index.js";
 import lexer from "./index.js";
 
-const tests = [
-  {
-    source: "let x = 5;",
-    expect: [
-      { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
-      { type: "operator", value: "=" },
-      { type: "number", value: "5" },
-      { type: "punctuation", value: ";" },
-    ],
-  },
-  {
-    source: "let x=5;",
-    expect: [
-      { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
-      { type: "operator", value: "=" },
-      { type: "number", value: "5" },
-      { type: "punctuation", value: ";" },
-    ],
-  },
-];
-
-for (const { source, expect } of tests) {
+for (const { source, expect } of testcases) {
   try {
     assert.deepStrictEqual(lexer(source), expect);
     console.log(`✅ Passed: "${source}"`);

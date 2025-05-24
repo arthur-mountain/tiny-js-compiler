@@ -3,6 +3,7 @@ export type TokenType =
   | { type: "operator"; value: string }
   | { type: "punctuation"; value: string }
   | { type: "number"; value: string }
+  | { type: "string"; value: string }
   | { type: "name"; value: string };
 
 const keywords = new Set(["var", "let", "const"]);
@@ -45,6 +46,27 @@ const tokenlizer = (sourceCode: string) => {
         i++;
       }
       tokens.push({ type: "number", value });
+      continue;
+    }
+
+    // 字串(單/雙引號)
+    if (char === '"' || char === "'") {
+      const quoteType = char;
+      i++; // 跳過起始引號
+      let value = "";
+
+      while (i < sourceCode.length && sourceCode[i] !== quoteType) {
+        value += sourceCode[i];
+        i++;
+      }
+
+      if (sourceCode[i] === quoteType) {
+        i++; // 跳過結尾引號
+        tokens.push({ type: "string", value });
+      } else {
+        throw new TypeError("Unterminated string literal");
+      }
+
       continue;
     }
 
