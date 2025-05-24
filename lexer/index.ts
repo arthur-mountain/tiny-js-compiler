@@ -7,6 +7,7 @@ export type TokenType =
   | { type: "name"; value: string };
 
 const keywords = new Set(["var", "let", "const"]);
+const operators = new Set(["+", "-", "*", "/", "="]);
 
 const tokenlizer = (sourceCode: string) => {
   const tokens: TokenType[] = [];
@@ -22,9 +23,10 @@ const tokenlizer = (sourceCode: string) => {
     }
 
     // 處理字母開頭 (可能是變數名稱或關鍵字)
-    if (/[a-zA-Z]/.test(char)) {
+    if (/[a-zA-Z_$]/.test(char)) {
       let value = "";
-      while (/[a-zA-Z]/.test(sourceCode[i])) {
+
+      while (i < sourceCode.length && /[a-zA-Z0-9_$]/.test(sourceCode[i])) {
         value += sourceCode[i];
         i++;
       }
@@ -89,9 +91,9 @@ const tokenlizer = (sourceCode: string) => {
       continue;
     }
 
-    // 賦值符號 "="
-    if (char === "=") {
-      tokens.push({ type: "operator", value: "=" });
+    // 運算符號
+    if (operators.has(char)) {
+      tokens.push({ type: "operator", value: char });
       i++;
       continue;
     }
