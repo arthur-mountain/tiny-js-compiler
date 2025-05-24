@@ -1,0 +1,72 @@
+export type TokenType =
+  | { type: "keyword"; value: string }
+  | { type: "operator"; value: string }
+  | { type: "punctuation"; value: string }
+  | { type: "number"; value: string }
+  | { type: "name"; value: string };
+
+const keywords = new Set(["var", "let", "const"]);
+
+const tokenlizer = (sourceCode: string) => {
+  const tokens: TokenType[] = [];
+  let i = 0;
+
+  while (i < sourceCode.length) {
+    const char = sourceCode[i];
+
+    // 跳過空白字元
+    if (/\s/.test(char)) {
+      i++;
+      continue;
+    }
+
+    // 處理字母開頭 (可能是變數名稱或關鍵字)
+    if (/[a-zA-Z]/.test(char)) {
+      let value = "";
+      while (/[a-zA-Z]/.test(sourceCode[i])) {
+        value += sourceCode[i];
+        i++;
+      }
+
+      if (keywords.has(value)) {
+        tokens.push({ type: "keyword", value });
+      } else {
+        tokens.push({ type: "name", value });
+      }
+
+      continue;
+    }
+
+    // 數字
+    if (/[0-9]/.test(char)) {
+      let value = "";
+      while (/[0-9]/.test(sourceCode[i])) {
+        value += sourceCode[i];
+        i++;
+      }
+      tokens.push({ type: "number", value });
+      continue;
+    }
+
+    // 賦值符號 "="
+    if (char === "=") {
+      tokens.push({ type: "operator", value: "=" });
+      i++;
+      continue;
+    }
+
+    // 結尾分號 ";"
+    if (char === ";") {
+      tokens.push({ type: "punctuation", value: ";" });
+      i++;
+      continue;
+    }
+
+    // 尚未實作，其他情況(未處理的字符)
+    throw new TypeError(`Unexpected character: ${char}`);
+  }
+
+  return tokens;
+};
+
+export default tokenlizer;
