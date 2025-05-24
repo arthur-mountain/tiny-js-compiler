@@ -21,6 +21,7 @@ const keywords = new Set([
   "if",
   "else if",
   "else",
+  "return",
 ]);
 const punctuations = new Set([";"]);
 const colons = new Set([":"]);
