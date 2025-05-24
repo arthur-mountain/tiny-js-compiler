@@ -41,6 +41,32 @@ const arrayTestCases = [
       { type: "punctuation", value: ";" },
     ],
   },
+  {
+    description: "初始化陣列包物件",
+    source: 'let x = [1,2,3, {}, { key1: "value1" }];',
+    expect: [
+      { type: "keyword", value: "let" },
+      { type: "name", value: "x" },
+      { type: "operator", value: "=" },
+      { type: "bracket", value: "[" },
+      { type: "number", value: "1" },
+      { type: "comma", value: "," },
+      { type: "number", value: "2" },
+      { type: "comma", value: "," },
+      { type: "number", value: "3" },
+      { type: "comma", value: "," },
+      { type: "brace", value: "{" },
+      { type: "brace", value: "}" },
+      { type: "comma", value: "," },
+      { type: "brace", value: "{" },
+      { type: "name", value: "key1" },
+      { type: "colon", value: ":" },
+      { type: "string", value: "value1" },
+      { type: "brace", value: "}" },
+      { type: "bracket", value: "]" },
+      { type: "punctuation", value: ";" },
+    ],
+  },
 ];
 
 export { arrayTestCases };
