@@ -5,6 +5,7 @@ import { keywordsTestCases } from "./keywords.js";
 import { operatorTestCases } from "./operators.js";
 import { arrayTestCases } from "./array.js";
 import { objectTestCases } from "./object.js";
+import { functionTestCases } from "./function.js";
 
 export default [
   ...numberTestCases,
@@ -14,4 +15,5 @@ export default [
   ...operatorTestCases,
   ...arrayTestCases,
   ...objectTestCases,
+  ...functionTestCases,
 ];

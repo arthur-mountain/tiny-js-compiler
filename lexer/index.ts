@@ -11,7 +11,7 @@ export type TokenType =
   | { type: "colon"; value: string }
   | { type: "comma"; value: string };
 
-const keywords = new Set(["var", "let", "const", "function"]);
+const keywords = new Set(["var", "let", "const", "function", "async", "await"]);
 const punctuations = new Set([";"]);
 const colons = new Set([":"]);
 const commas = new Set([","]);
