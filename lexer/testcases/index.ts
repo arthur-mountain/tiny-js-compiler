@@ -10,6 +10,7 @@ import { conditionTestCases } from "./condition.js";
 import { loopTestCases } from "./loop.js";
 import { controlFlowTestCases } from "./controlFlow.js";
 import { exceptionTestCases } from "./exception.js";
+import { classTestCases } from "./class.js";
 
 export default [
   ...numberTestCases,
@@ -24,4 +25,5 @@ export default [
   ...loopTestCases,
   ...controlFlowTestCases,
   ...exceptionTestCases,
+  ...classTestCases,
 ];

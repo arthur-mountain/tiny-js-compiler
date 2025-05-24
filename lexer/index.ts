@@ -35,6 +35,11 @@ const keywords = new Set([
   "try",
   "catch",
   "finally",
+  "new",
+  "class",
+  "extends",
+  "super",
+  "this",
 ]);
 const punctuations = new Set([";"]);
 const colons = new Set([":"]);
