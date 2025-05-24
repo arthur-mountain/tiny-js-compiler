@@ -1,10 +1,10 @@
 # tiny-js-compiler
 
-A minimal, self-bootstrapping JavaScript compiler written in JavaScript.
+A minimal, self-bootstrapping JavaScript compiler written in Typescript.
 
 ## Features
 
-- Fully implemented in JavaScript
+- Fully implemented in Typescript
 
 - Parses and compiles a simplified subset of JavaScript
 
