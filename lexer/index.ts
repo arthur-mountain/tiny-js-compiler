@@ -92,6 +92,15 @@ const tokenlizer = (sourceCode: string) => {
         value += sourceCode[i];
         i++;
       }
+
+      if (sourceCode[i] === "." && /[0-9]/.test(sourceCode[i + 1])) {
+        value += sourceCode[i++]; // 加上小數點
+        while (/[0-9]/.test(sourceCode[i])) {
+          value += sourceCode[i];
+          i++;
+        }
+      }
+
       tokens.push({ type: "number", value });
       continue;
     }

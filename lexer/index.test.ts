@@ -9,9 +9,10 @@ for (const { source, expect } of testcases) {
     } else {
       assert.deepStrictEqual(lexer(source), expect);
     }
-    console.log(`✅ Passed: "${source}"`);
   } catch (err) {
     console.error(`❌ Failed: "${source}"`);
     console.error(err);
   }
 }
+
+console.log("✅ All Passed");
