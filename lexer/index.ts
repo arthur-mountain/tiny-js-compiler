@@ -4,10 +4,17 @@ export type TokenType =
   | { type: "punctuation"; value: string }
   | { type: "number"; value: string }
   | { type: "string"; value: string }
-  | { type: "name"; value: string };
+  | { type: "name"; value: string }
+  | { type: "parenthesis"; value: string }
+  | { type: "bracket"; value: string }
+  | { type: "brace"; value: string };
 
 const keywords = new Set(["var", "let", "const", "function"]);
+const punctuations = new Set([";", ","]);
 const operators = new Set(["+", "-", "*", "/", "=", ">", "<", "!"]);
+const parenthesis = new Set(["(", ")"]);
+const brackets = new Set(["[", "]"]);
+const braces = new Set(["{", "}"]);
 
 const tokenlizer = (sourceCode: string) => {
   const tokens: TokenType[] = [];
@@ -148,9 +155,30 @@ const tokenlizer = (sourceCode: string) => {
       continue;
     }
 
-    // 結尾分號 ";"
-    if (char === ";") {
-      tokens.push({ type: "punctuation", value: ";" });
+    // 小括號
+    if (parenthesis.has(char)) {
+      tokens.push({ type: "parenthesis", value: char });
+      i++;
+      continue;
+    }
+
+    // 中括號
+    if (brackets.has(char)) {
+      tokens.push({ type: "bracket", value: char });
+      i++;
+      continue;
+    }
+
+    // 大括號
+    if (braces.has(char)) {
+      tokens.push({ type: "brace", value: char });
+      i++;
+      continue;
+    }
+
+    // Punctuation
+    if (punctuations.has(char)) {
+      tokens.push({ type: "punctuation", value: char });
       i++;
       continue;
     }
