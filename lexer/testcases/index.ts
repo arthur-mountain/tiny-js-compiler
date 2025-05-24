@@ -7,6 +7,7 @@ import { operatorTestCases } from "./operators.js";
 export default [
   ...numberTestCases,
   ...stringTestCases,
+  ...identifierTestCases,
   ...keywordsTestCases,
   ...operatorTestCases,
 ];
