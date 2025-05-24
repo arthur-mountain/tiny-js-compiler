@@ -11,7 +11,17 @@ export type TokenType =
   | { type: "colon"; value: string }
   | { type: "comma"; value: string };
 
-const keywords = new Set(["var", "let", "const", "function", "async", "await"]);
+const keywords = new Set([
+  "var",
+  "let",
+  "const",
+  "function",
+  "async",
+  "await",
+  "if",
+  "else if",
+  "else",
+]);
 const punctuations = new Set([";"]);
 const colons = new Set([":"]);
 const commas = new Set([","]);
@@ -40,6 +50,15 @@ const tokenlizer = (sourceCode: string) => {
       while (i < sourceCode.length && /[a-zA-Z0-9_$]/.test(sourceCode[i])) {
         value += sourceCode[i];
         i++;
+      }
+
+      if (
+        value === "else" &&
+        sourceCode[i + 1] === "i" &&
+        sourceCode[i + 2] === "f"
+      ) {
+        value += " if";
+        i += 3;
       }
 
       if (keywords.has(value)) {

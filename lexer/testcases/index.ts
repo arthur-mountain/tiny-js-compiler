@@ -6,6 +6,7 @@ import { operatorTestCases } from "./operators.js";
 import { arrayTestCases } from "./array.js";
 import { objectTestCases } from "./object.js";
 import { functionTestCases } from "./function.js";
+import { conditionTestCases } from "./condition.js";
 
 export default [
   ...numberTestCases,
@@ -16,4 +17,5 @@ export default [
   ...arrayTestCases,
   ...objectTestCases,
   ...functionTestCases,
+  ...conditionTestCases,
 ];
