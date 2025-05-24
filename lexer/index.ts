@@ -19,9 +19,19 @@ const keywords = new Set([
   "function",
   "async",
   "await",
+  "true",
+  "false",
   "if",
   "else",
   "return",
+  "for",
+  "while",
+  "do",
+  "break",
+  "continue",
+  "switch",
+  "case",
+  "default",
 ]);
 const punctuations = new Set([";"]);
 const colons = new Set([":"]);
