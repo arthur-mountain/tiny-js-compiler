@@ -6,8 +6,8 @@ export type TokenType =
   | { type: "string"; value: string }
   | { type: "name"; value: string };
 
-const keywords = new Set(["var", "let", "const"]);
-const operators = new Set(["+", "-", "*", "/", "="]);
+const keywords = new Set(["var", "let", "const", "function"]);
+const operators = new Set(["+", "-", "*", "/", "=", ">", "<", "!"]);
 
 const tokenlizer = (sourceCode: string) => {
   const tokens: TokenType[] = [];
@@ -93,6 +93,56 @@ const tokenlizer = (sourceCode: string) => {
 
     // 運算符號
     if (operators.has(char)) {
+      if (char === "=") {
+        if (sourceCode[i + 1] === "=" && sourceCode[i + 2] === "=") {
+          tokens.push({ type: "operator", value: "===" });
+          i += 3;
+          continue;
+        } else if (sourceCode[i + 1] === "=") {
+          tokens.push({ type: "operator", value: "==" });
+          i += 2;
+          continue;
+        }
+      } else if (char === ">") {
+        if (sourceCode[i + 1] === ">" && sourceCode[i + 2] === ">") {
+          tokens.push({ type: "operator", value: ">>>" });
+          i += 3;
+          continue;
+        } else if (sourceCode[i + 1] === ">") {
+          tokens.push({ type: "operator", value: ">>" });
+          i += 2;
+          continue;
+        } else if (sourceCode[i + 1] === "=") {
+          tokens.push({ type: "operator", value: ">=" });
+          i += 2;
+          continue;
+        }
+      } else if (char === "<") {
+        if (sourceCode[i + 1] === "<" && sourceCode[i + 2] === "<") {
+          tokens.push({ type: "operator", value: "<<<" });
+          i += 3;
+          continue;
+        } else if (sourceCode[i + 1] === "<") {
+          tokens.push({ type: "operator", value: "<<" });
+          i += 2;
+          continue;
+        } else if (sourceCode[i + 1] === "=") {
+          tokens.push({ type: "operator", value: "<=" });
+          i += 2;
+          continue;
+        }
+      } else if (char === "!") {
+        if (sourceCode[i + 1] === "=" && sourceCode[i + 2] === "=") {
+          tokens.push({ type: "operator", value: "!==" });
+          i += 3;
+          continue;
+        } else if (sourceCode[i + 1] === "=") {
+          tokens.push({ type: "operator", value: "!=" });
+          i += 2;
+          continue;
+        }
+      }
+
       tokens.push({ type: "operator", value: char });
       i++;
       continue;
