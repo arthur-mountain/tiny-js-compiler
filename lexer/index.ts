@@ -157,6 +157,10 @@ const tokenlizer = (sourceCode: string) => {
           tokens.push({ type: "operator", value: "==" });
           i += 2;
           continue;
+        } else if (sourceCode[i + 1] === ">") {
+          tokens.push({ type: "operator", value: "=>" });
+          i += 2;
+          continue;
         }
       } else if (char === ">") {
         if (sourceCode[i + 1] === ">" && sourceCode[i + 2] === ">") {

@@ -229,6 +229,27 @@ const functionTestCases = [
       { type: "punctuation", value: ";" },
     ],
   },
+  {
+    description: "箭頭函式",
+    source: "const test = () => { return { key1: 'value1' } };",
+    expect: [
+      { type: "keyword", value: "const" },
+      { type: "name", value: "test" },
+      { type: "operator", value: "=" },
+      { type: "parenthesis", value: "(" },
+      { type: "parenthesis", value: ")" },
+      { type: "operator", value: "=>" },
+      { type: "brace", value: "{" },
+      { type: "keyword", value: "return" },
+      { type: "brace", value: "{" },
+      { type: "name", value: "key1" },
+      { type: "colon", value: ":" },
+      { type: "string", value: "value1" },
+      { type: "brace", value: "}" },
+      { type: "brace", value: "}" },
+      { type: "punctuation", value: ";" },
+    ],
+  },
 ];
 
 export { functionTestCases };
