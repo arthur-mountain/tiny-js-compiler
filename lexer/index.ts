@@ -49,14 +49,33 @@ const tokenlizer = (sourceCode: string) => {
       continue;
     }
 
-    // 字串(單/雙引號)
+    // 字串(單/雙引號，含跳脫字元處理)
     if (char === '"' || char === "'") {
       const quoteType = char;
       i++; // 跳過起始引號
       let value = "";
 
-      while (i < sourceCode.length && sourceCode[i] !== quoteType) {
-        value += sourceCode[i];
+      while (i < sourceCode.length) {
+        const currentChar = sourceCode[i];
+
+        if (currentChar === "\\") {
+          // 跳過跳脫字元，取得下一個 char 進行判斷，避免類似這樣的 "abc\"
+          i++;
+          const nextChar = sourceCode[i];
+          if (nextChar === undefined) {
+            throw new TypeError("Unexpected end after escape character");
+          }
+
+          value += nextChar;
+          i++;
+          continue;
+        }
+
+        if (currentChar === quoteType) {
+          break; // 結束字串
+        }
+
+        value += currentChar;
         i++;
       }
 

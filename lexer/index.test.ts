@@ -4,7 +4,11 @@ import lexer from "./index.js";
 
 for (const { source, expect } of testcases) {
   try {
-    assert.deepStrictEqual(lexer(source), expect);
+    if (expect instanceof Error) {
+      assert.throws(() => lexer(source));
+    } else {
+      assert.deepStrictEqual(lexer(source), expect);
+    }
     console.log(`✅ Passed: "${source}"`);
   } catch (err) {
     console.error(`❌ Failed: "${source}"`);
