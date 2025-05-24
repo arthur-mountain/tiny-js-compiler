@@ -32,6 +32,9 @@ const keywords = new Set([
   "switch",
   "case",
   "default",
+  "try",
+  "catch",
+  "finally",
 ]);
 const punctuations = new Set([";"]);
 const colons = new Set([":"]);
