@@ -9,7 +9,8 @@ export type TokenType =
   | { type: "bracket"; value: string }
   | { type: "brace"; value: string }
   | { type: "colon"; value: string }
-  | { type: "comma"; value: string };
+  | { type: "comma"; value: string }
+  | { type: "dot"; value: string };
 
 const keywords = new Set([
   "var",
@@ -25,6 +26,7 @@ const keywords = new Set([
 const punctuations = new Set([";"]);
 const colons = new Set([":"]);
 const commas = new Set([","]);
+const dots = new Set(["."]);
 const operators = new Set(["+", "-", "*", "/", "=", ">", "<", "!"]);
 const parenthesis = new Set(["(", ")"]);
 const brackets = new Set(["[", "]"]);
@@ -207,6 +209,13 @@ const tokenlizer = (sourceCode: string) => {
     // comma
     if (commas.has(char)) {
       tokens.push({ type: "comma", value: char });
+      i++;
+      continue;
+    }
+
+    // dot
+    if (dots.has(char)) {
+      tokens.push({ type: "dot", value: char });
       i++;
       continue;
     }
