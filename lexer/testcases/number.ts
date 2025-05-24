@@ -124,6 +124,36 @@ const numberTestCases = [
       { type: "punctuation", value: ";" },
     ],
   },
+  {
+    description: "除等於",
+    source: "let x = 5; x/=10;",
+    expect: [
+      { type: "keyword", value: "let" },
+      { type: "name", value: "x" },
+      { type: "operator", value: "=" },
+      { type: "number", value: "5" },
+      { type: "punctuation", value: ";" },
+      { type: "name", value: "x" },
+      { type: "operator", value: "/=" },
+      { type: "number", value: "10" },
+      { type: "punctuation", value: ";" },
+    ],
+  },
+  {
+    description: "乘等於",
+    source: "let x = 5; x*=10;",
+    expect: [
+      { type: "keyword", value: "let" },
+      { type: "name", value: "x" },
+      { type: "operator", value: "=" },
+      { type: "number", value: "5" },
+      { type: "punctuation", value: ";" },
+      { type: "name", value: "x" },
+      { type: "operator", value: "*=" },
+      { type: "number", value: "10" },
+      { type: "punctuation", value: ";" },
+    ],
+  },
 ];
 
 export { numberTestCases };

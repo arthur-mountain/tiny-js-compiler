@@ -10,7 +10,8 @@ export type TokenType =
   | { type: "brace"; value: string }
   | { type: "colon"; value: string }
   | { type: "comma"; value: string }
-  | { type: "dot"; value: string };
+  | { type: "dot"; value: string }
+  | { type: "comment"; value: string };
 
 const keywords = new Set([
   "var",
@@ -145,7 +146,7 @@ const tokenlizer = (sourceCode: string) => {
       continue;
     }
 
-    // 運算符號
+    // 運算符號(包含註解)
     if (operators.has(char)) {
       if (char === "=") {
         if (sourceCode[i + 1] === "=" && sourceCode[i + 2] === "=") {
@@ -213,6 +214,60 @@ const tokenlizer = (sourceCode: string) => {
         } else if (sourceCode[i + 1] === "=") {
           tokens.push({ type: "operator", value: "-=" });
           i += 2;
+          continue;
+        }
+      } else if (char === "*") {
+        if (sourceCode[i + 1] === "*") {
+          tokens.push({ type: "operator", value: "**" });
+          i += 2;
+          continue;
+        } else if (sourceCode[i + 1] === "=") {
+          tokens.push({ type: "operator", value: "*=" });
+          i += 2;
+          continue;
+        }
+      } else if (char === "/") {
+        if (sourceCode[i + 1] === "=") {
+          tokens.push({ type: "operator", value: "/=" });
+          i += 2;
+          continue;
+        } else if (sourceCode[i + 1] === "/") {
+          // single line comment
+          i += 2; // 跳過 "//"
+          let value = "";
+
+          while (i < sourceCode.length && sourceCode[i] !== "\n") {
+            value += sourceCode[i++];
+          }
+
+          tokens.push({ type: "comment", value });
+          continue;
+        } else if (sourceCode[i + 1] === "*") {
+          // multi line comment
+          i += 2;
+          let value = "/*";
+          let missingCloseComment = true;
+
+          while (i < sourceCode.length) {
+            if (
+              sourceCode[i] === "*" &&
+              i + 1 < sourceCode.length &&
+              sourceCode[i + 1] === "/"
+            ) {
+              value += "*/";
+              i += 2;
+              missingCloseComment = false;
+              break;
+            }
+
+            value += sourceCode[i++];
+          }
+
+          if (missingCloseComment) {
+            throw new TypeError("Unterminated block comment");
+          }
+
+          tokens.push({ type: "comment", value });
           continue;
         }
       }

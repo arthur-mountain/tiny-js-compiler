@@ -12,6 +12,7 @@ import { controlFlowTestCases } from "./controlFlow.js";
 import { exceptionTestCases } from "./exception.js";
 import { classTestCases } from "./class.js";
 import { typeofInstanceofInDeleteTestCases } from "./typeofInstanceOfInDelete.js";
+import { commentTestCases } from "./comment.js";
 
 export default [
   ...numberTestCases,
@@ -28,4 +29,5 @@ export default [
   ...exceptionTestCases,
   ...classTestCases,
   ...typeofInstanceofInDeleteTestCases,
+  ...commentTestCases,
 ];
