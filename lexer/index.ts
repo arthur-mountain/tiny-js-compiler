@@ -164,6 +164,18 @@ const tokenlizer = (sourceCode: string) => {
           i += 2;
           continue;
         }
+      } else if (char === "+") {
+        if (sourceCode[i + 1] === "+") {
+          tokens.push({ type: "operator", value: "++" });
+          i += 2;
+          continue;
+        }
+      } else if (char === "-") {
+        if (sourceCode[i + 1] === "-") {
+          tokens.push({ type: "operator", value: "--" });
+          i += 2;
+          continue;
+        }
       }
 
       tokens.push({ type: "operator", value: char });
