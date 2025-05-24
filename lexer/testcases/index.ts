@@ -11,6 +11,7 @@ import { loopTestCases } from "./loop.js";
 import { controlFlowTestCases } from "./controlFlow.js";
 import { exceptionTestCases } from "./exception.js";
 import { classTestCases } from "./class.js";
+import { typeofInstanceofInDeleteTestCases } from "./typeofInstanceOfInDelete.js";
 
 export default [
   ...numberTestCases,
@@ -26,4 +27,5 @@ export default [
   ...controlFlowTestCases,
   ...exceptionTestCases,
   ...classTestCases,
+  ...typeofInstanceofInDeleteTestCases,
 ];

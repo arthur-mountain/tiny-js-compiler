@@ -40,6 +40,10 @@ const keywords = new Set([
   "extends",
   "super",
   "this",
+  "typeof",
+  "instanceof",
+  "in",
+  "delete",
 ]);
 const punctuations = new Set([";"]);
 const colons = new Set([":"]);
