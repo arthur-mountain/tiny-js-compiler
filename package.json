@@ -1,0 +1,21 @@
+{
+  "name": "tiny-js-compiler",
+  "version": "1.0.0",
+  "license": "ISC",
+  "author": "arthur-mountain",
+  "keywords": [
+    "Compiler",
+    "AST"
+  ],
+  "description": "Tiny JavaScript Compiler",
+  "type": "module",
+  "main": "dist/compiler.js",
+  "scripts": {
+    "build": "tsc",
+    "dev:watch": "tsc --watch",
+    "start": "npm run build && node dist/compiler.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
