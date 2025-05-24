@@ -1,7 +1,7 @@
 {
   "name": "tiny-js-compiler",
   "version": "1.0.0",
-  "license": "ISC",
+  "license": "MIT",
   "author": "arthur-mountain",
   "keywords": [
     "Compiler",
