@@ -3,6 +3,7 @@ import { stringTestCases } from "./string.js";
 import { identifierTestCases } from "./identifier.js";
 import { keywordsTestCases } from "./keywords.js";
 import { operatorTestCases } from "./operators.js";
+import { arrayTestCases } from "./array.js";
 
 export default [
   ...numberTestCases,
@@ -10,4 +11,5 @@ export default [
   ...identifierTestCases,
   ...keywordsTestCases,
   ...operatorTestCases,
+  ...arrayTestCases,
 ];
