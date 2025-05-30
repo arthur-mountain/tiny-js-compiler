@@ -97,8 +97,8 @@ const tokenlizer = (sourceCode: string) => {
         i++;
       }
 
-      if (getChar(i) === "." && /[0-9]/.test(sourceCode[i + 1])) {
-        value += sourceCode[i++]; // 加上小數點
+      if (getChar(i) === "." && /[0-9]/.test(getChar(i + 1))) {
+        value += getChar(i++); // 加上小數點
         while (/[0-9]/.test(getChar(i))) {
           value += getChar(i);
           i++;
@@ -152,104 +152,104 @@ const tokenlizer = (sourceCode: string) => {
     // 運算符號(包含註解)
     if (operators.has(char)) {
       if (char === "=") {
-        if (sourceCode[i + 1] === "=" && sourceCode[i + 2] === "=") {
+        if (getChar(i + 1) === "=" && getChar(i + 2) === "=") {
           tokens.push({ type: "operator", value: "===" });
           i += 3;
           continue;
-        } else if (sourceCode[i + 1] === "=") {
+        } else if (getChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "==" });
           i += 2;
           continue;
-        } else if (sourceCode[i + 1] === ">") {
+        } else if (getChar(i + 1) === ">") {
           tokens.push({ type: "operator", value: "=>" });
           i += 2;
           continue;
         }
       } else if (char === ">") {
-        if (sourceCode[i + 1] === ">" && sourceCode[i + 2] === ">") {
+        if (getChar(i + 1) === ">" && getChar(i + 2) === ">") {
           tokens.push({ type: "operator", value: ">>>" });
           i += 3;
           continue;
-        } else if (sourceCode[i + 1] === ">") {
+        } else if (getChar(i + 1) === ">") {
           tokens.push({ type: "operator", value: ">>" });
           i += 2;
           continue;
-        } else if (sourceCode[i + 1] === "=") {
+        } else if (getChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: ">=" });
           i += 2;
           continue;
         }
       } else if (char === "<") {
-        if (sourceCode[i + 1] === "<" && sourceCode[i + 2] === "<") {
+        if (getChar(i + 1) === "<" && getChar(i + 2) === "<") {
           tokens.push({ type: "operator", value: "<<<" });
           i += 3;
           continue;
-        } else if (sourceCode[i + 1] === "<") {
+        } else if (getChar(i + 1) === "<") {
           tokens.push({ type: "operator", value: "<<" });
           i += 2;
           continue;
-        } else if (sourceCode[i + 1] === "=") {
+        } else if (getChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "<=" });
           i += 2;
           continue;
         }
       } else if (char === "!") {
-        if (sourceCode[i + 1] === "=" && sourceCode[i + 2] === "=") {
+        if (getChar(i + 1) === "=" && getChar(i + 2) === "=") {
           tokens.push({ type: "operator", value: "!==" });
           i += 3;
           continue;
-        } else if (sourceCode[i + 1] === "=") {
+        } else if (getChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "!=" });
           i += 2;
           continue;
         }
       } else if (char === "+") {
-        if (sourceCode[i + 1] === "+") {
+        if (getChar(i + 1) === "+") {
           tokens.push({ type: "operator", value: "++" });
           i += 2;
           continue;
-        } else if (sourceCode[i + 1] === "=") {
+        } else if (getChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "+=" });
           i += 2;
           continue;
         }
       } else if (char === "-") {
-        if (sourceCode[i + 1] === "-") {
+        if (getChar(i + 1) === "-") {
           tokens.push({ type: "operator", value: "--" });
           i += 2;
           continue;
-        } else if (sourceCode[i + 1] === "=") {
+        } else if (getChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "-=" });
           i += 2;
           continue;
         }
       } else if (char === "*") {
-        if (sourceCode[i + 1] === "*") {
+        if (getChar(i + 1) === "*") {
           tokens.push({ type: "operator", value: "**" });
           i += 2;
           continue;
-        } else if (sourceCode[i + 1] === "=") {
+        } else if (getChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "*=" });
           i += 2;
           continue;
         }
       } else if (char === "/") {
-        if (sourceCode[i + 1] === "=") {
+        if (getChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "/=" });
           i += 2;
           continue;
-        } else if (sourceCode[i + 1] === "/") {
+        } else if (getChar(i + 1) === "/") {
           // single line comment
           i += 2; // 跳過 "//"
           let value = "";
 
           while (i < sourceCode.length && getChar(i) !== "\n") {
-            value += sourceCode[i++];
+            value += getChar(i++);
           }
 
           tokens.push({ type: "comment", value });
           continue;
-        } else if (sourceCode[i + 1] === "*") {
+        } else if (getChar(i + 1) === "*") {
           // multi line comment
           i += 2;
           let value = "/*";
@@ -259,7 +259,7 @@ const tokenlizer = (sourceCode: string) => {
             if (
               getChar(i) === "*" &&
               i + 1 < sourceCode.length &&
-              sourceCode[i + 1] === "/"
+              getChar(i + 1) === "/"
             ) {
               value += "*/";
               i += 2;
@@ -267,7 +267,7 @@ const tokenlizer = (sourceCode: string) => {
               break;
             }
 
-            value += sourceCode[i++];
+            value += getChar(i++);
           }
 
           if (missingCloseComment) {
