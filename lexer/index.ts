@@ -59,8 +59,11 @@ const tokenlizer = (sourceCode: string) => {
   const tokens: TokenType[] = [];
   let i = 0;
 
+  const getChar = (i: number) =>
+    String.fromCodePoint(sourceCode.codePointAt(i)!);
+
   while (i < sourceCode.length) {
-    const char = sourceCode[i];
+    const char = getChar(i);
 
     // 跳過空白字元
     if (/\s/.test(char)) {
@@ -72,8 +75,8 @@ const tokenlizer = (sourceCode: string) => {
     if (/[a-zA-Z_$]/.test(char)) {
       let value = "";
 
-      while (i < sourceCode.length && /[a-zA-Z0-9_$]/.test(sourceCode[i])) {
-        value += sourceCode[i];
+      while (i < sourceCode.length && /[a-zA-Z0-9_$]/.test(getChar(i))) {
+        value += getChar(i);
         i++;
       }
 
@@ -89,15 +92,15 @@ const tokenlizer = (sourceCode: string) => {
     // 數字
     if (/[0-9]/.test(char)) {
       let value = "";
-      while (/[0-9]/.test(sourceCode[i])) {
-        value += sourceCode[i];
+      while (/[0-9]/.test(getChar(i))) {
+        value += getChar(i);
         i++;
       }
 
-      if (sourceCode[i] === "." && /[0-9]/.test(sourceCode[i + 1])) {
+      if (getChar(i) === "." && /[0-9]/.test(sourceCode[i + 1])) {
         value += sourceCode[i++]; // 加上小數點
-        while (/[0-9]/.test(sourceCode[i])) {
-          value += sourceCode[i];
+        while (/[0-9]/.test(getChar(i))) {
+          value += getChar(i);
           i++;
         }
       }
@@ -113,12 +116,12 @@ const tokenlizer = (sourceCode: string) => {
       let value = "";
 
       while (i < sourceCode.length) {
-        const currentChar = sourceCode[i];
+        const currentChar = getChar(i);
 
         if (currentChar === "\\") {
           // 跳過跳脫字元，取得下一個 char 進行判斷，避免類似這樣的 "abc\"
           i++;
-          const nextChar = sourceCode[i];
+          const nextChar = getChar(i);
           if (nextChar === undefined) {
             throw new TypeError("Unexpected end after escape character");
           }
@@ -136,7 +139,7 @@ const tokenlizer = (sourceCode: string) => {
         i++;
       }
 
-      if (sourceCode[i] === quoteType) {
+      if (getChar(i) === quoteType) {
         i++; // 跳過結尾引號
         tokens.push({ type: "string", value });
       } else {
@@ -240,7 +243,7 @@ const tokenlizer = (sourceCode: string) => {
           i += 2; // 跳過 "//"
           let value = "";
 
-          while (i < sourceCode.length && sourceCode[i] !== "\n") {
+          while (i < sourceCode.length && getChar(i) !== "\n") {
             value += sourceCode[i++];
           }
 
@@ -254,7 +257,7 @@ const tokenlizer = (sourceCode: string) => {
 
           while (i < sourceCode.length) {
             if (
-              sourceCode[i] === "*" &&
+              getChar(i) === "*" &&
               i + 1 < sourceCode.length &&
               sourceCode[i + 1] === "/"
             ) {
