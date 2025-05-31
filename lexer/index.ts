@@ -59,11 +59,11 @@ const tokenlizer = (sourceCode: string) => {
   const tokens: TokenType[] = [];
   let i = 0;
 
-  const getChar = (i: number) =>
+  const peekChar = (i: number) =>
     String.fromCodePoint(sourceCode.codePointAt(i)!);
 
   while (i < sourceCode.length) {
-    const char = getChar(i);
+    const char = peekChar(i);
 
     // 跳過空白字元
     if (/\s/.test(char)) {
@@ -75,8 +75,8 @@ const tokenlizer = (sourceCode: string) => {
     if (/[a-zA-Z_$]/.test(char)) {
       let value = "";
 
-      while (i < sourceCode.length && /[a-zA-Z0-9_$]/.test(getChar(i))) {
-        value += getChar(i);
+      while (i < sourceCode.length && /[a-zA-Z0-9_$]/.test(peekChar(i))) {
+        value += peekChar(i);
         i++;
       }
 
@@ -92,15 +92,15 @@ const tokenlizer = (sourceCode: string) => {
     // 數字
     if (/[0-9]/.test(char)) {
       let value = "";
-      while (/[0-9]/.test(getChar(i))) {
-        value += getChar(i);
+      while (/[0-9]/.test(peekChar(i))) {
+        value += peekChar(i);
         i++;
       }
 
-      if (getChar(i) === "." && /[0-9]/.test(getChar(i + 1))) {
-        value += getChar(i++); // 加上小數點
-        while (/[0-9]/.test(getChar(i))) {
-          value += getChar(i);
+      if (peekChar(i) === "." && /[0-9]/.test(peekChar(i + 1))) {
+        value += peekChar(i++); // 加上小數點
+        while (/[0-9]/.test(peekChar(i))) {
+          value += peekChar(i);
           i++;
         }
       }
@@ -116,12 +116,12 @@ const tokenlizer = (sourceCode: string) => {
       let value = "";
 
       while (i < sourceCode.length) {
-        const currentChar = getChar(i);
+        const currentChar = peekChar(i);
 
         if (currentChar === "\\") {
           // 跳過跳脫字元，取得下一個 char 進行判斷，避免類似這樣的 "abc\"
           i++;
-          const nextChar = getChar(i);
+          const nextChar = peekChar(i);
           if (nextChar === undefined) {
             throw new TypeError("Unexpected end after escape character");
           }
@@ -139,7 +139,7 @@ const tokenlizer = (sourceCode: string) => {
         i++;
       }
 
-      if (getChar(i) === quoteType) {
+      if (peekChar(i) === quoteType) {
         i++; // 跳過結尾引號
         tokens.push({ type: "string", value });
       } else {
@@ -152,104 +152,104 @@ const tokenlizer = (sourceCode: string) => {
     // 運算符號(包含註解)
     if (operators.has(char)) {
       if (char === "=") {
-        if (getChar(i + 1) === "=" && getChar(i + 2) === "=") {
+        if (peekChar(i + 1) === "=" && peekChar(i + 2) === "=") {
           tokens.push({ type: "operator", value: "===" });
           i += 3;
           continue;
-        } else if (getChar(i + 1) === "=") {
+        } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "==" });
           i += 2;
           continue;
-        } else if (getChar(i + 1) === ">") {
+        } else if (peekChar(i + 1) === ">") {
           tokens.push({ type: "operator", value: "=>" });
           i += 2;
           continue;
         }
       } else if (char === ">") {
-        if (getChar(i + 1) === ">" && getChar(i + 2) === ">") {
+        if (peekChar(i + 1) === ">" && peekChar(i + 2) === ">") {
           tokens.push({ type: "operator", value: ">>>" });
           i += 3;
           continue;
-        } else if (getChar(i + 1) === ">") {
+        } else if (peekChar(i + 1) === ">") {
           tokens.push({ type: "operator", value: ">>" });
           i += 2;
           continue;
-        } else if (getChar(i + 1) === "=") {
+        } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: ">=" });
           i += 2;
           continue;
         }
       } else if (char === "<") {
-        if (getChar(i + 1) === "<" && getChar(i + 2) === "<") {
+        if (peekChar(i + 1) === "<" && peekChar(i + 2) === "<") {
           tokens.push({ type: "operator", value: "<<<" });
           i += 3;
           continue;
-        } else if (getChar(i + 1) === "<") {
+        } else if (peekChar(i + 1) === "<") {
           tokens.push({ type: "operator", value: "<<" });
           i += 2;
           continue;
-        } else if (getChar(i + 1) === "=") {
+        } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "<=" });
           i += 2;
           continue;
         }
       } else if (char === "!") {
-        if (getChar(i + 1) === "=" && getChar(i + 2) === "=") {
+        if (peekChar(i + 1) === "=" && peekChar(i + 2) === "=") {
           tokens.push({ type: "operator", value: "!==" });
           i += 3;
           continue;
-        } else if (getChar(i + 1) === "=") {
+        } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "!=" });
           i += 2;
           continue;
         }
       } else if (char === "+") {
-        if (getChar(i + 1) === "+") {
+        if (peekChar(i + 1) === "+") {
           tokens.push({ type: "operator", value: "++" });
           i += 2;
           continue;
-        } else if (getChar(i + 1) === "=") {
+        } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "+=" });
           i += 2;
           continue;
         }
       } else if (char === "-") {
-        if (getChar(i + 1) === "-") {
+        if (peekChar(i + 1) === "-") {
           tokens.push({ type: "operator", value: "--" });
           i += 2;
           continue;
-        } else if (getChar(i + 1) === "=") {
+        } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "-=" });
           i += 2;
           continue;
         }
       } else if (char === "*") {
-        if (getChar(i + 1) === "*") {
+        if (peekChar(i + 1) === "*") {
           tokens.push({ type: "operator", value: "**" });
           i += 2;
           continue;
-        } else if (getChar(i + 1) === "=") {
+        } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "*=" });
           i += 2;
           continue;
         }
       } else if (char === "/") {
-        if (getChar(i + 1) === "=") {
+        if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "/=" });
           i += 2;
           continue;
-        } else if (getChar(i + 1) === "/") {
+        } else if (peekChar(i + 1) === "/") {
           // single line comment
           i += 2; // 跳過 "//"
           let value = "";
 
-          while (i < sourceCode.length && getChar(i) !== "\n") {
-            value += getChar(i++);
+          while (i < sourceCode.length && peekChar(i) !== "\n") {
+            value += peekChar(i++);
           }
 
           tokens.push({ type: "comment", value });
           continue;
-        } else if (getChar(i + 1) === "*") {
+        } else if (peekChar(i + 1) === "*") {
           // multi line comment
           i += 2;
           let value = "/*";
@@ -257,9 +257,9 @@ const tokenlizer = (sourceCode: string) => {
 
           while (i < sourceCode.length) {
             if (
-              getChar(i) === "*" &&
+              peekChar(i) === "*" &&
               i + 1 < sourceCode.length &&
-              getChar(i + 1) === "/"
+              peekChar(i + 1) === "/"
             ) {
               value += "*/";
               i += 2;
@@ -267,7 +267,7 @@ const tokenlizer = (sourceCode: string) => {
               break;
             }
 
-            value += getChar(i++);
+            value += peekChar(i++);
           }
 
           if (missingCloseComment) {
