@@ -44,6 +44,17 @@ const stringTestCases = [
     ],
   },
   {
+    description: "字串包含表情符號",
+    source: 'let str="compilerrrr 😍";',
+    expect: [
+      { type: "keyword", value: "let" },
+      { type: "name", value: "str" },
+      { type: "operator", value: "=" },
+      { type: "string", value: "compilerrrr 😍" },
+      { type: "punctuation", value: ";" },
+    ],
+  },
+  {
     description: "字串未正確結束，應拋出錯誤",
     source: 'let str="compilerrrr\\";',
     expect: new TypeError("Unterminated string literal"),
