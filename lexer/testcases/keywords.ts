@@ -4,7 +4,7 @@ const keywordsTestCases = [
     source: "var x = 5;",
     expect: [
       { type: "keyword", value: "var" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },
@@ -15,7 +15,7 @@ const keywordsTestCases = [
     source: "let x = 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },
@@ -26,7 +26,7 @@ const keywordsTestCases = [
     source: "const x = 5;",
     expect: [
       { type: "keyword", value: "const" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },

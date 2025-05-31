@@ -24,7 +24,7 @@ const commentTestCases = [
     source: "let x = 5; // variable x",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },
@@ -36,7 +36,7 @@ const commentTestCases = [
     source: "let x = 5; /* block comment */",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },

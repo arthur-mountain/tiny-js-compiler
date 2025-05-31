@@ -4,7 +4,7 @@ const stringTestCases = [
     source: "let str = 'compilerrrr';",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "str" },
+      { type: "identifier", value: "str" },
       { type: "operator", value: "=" },
       { type: "string", value: "compilerrrr" },
       { type: "punctuation", value: ";" },
@@ -15,7 +15,7 @@ const stringTestCases = [
     source: 'let str="compilerrrr";',
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "str" },
+      { type: "identifier", value: "str" },
       { type: "operator", value: "=" },
       { type: "string", value: "compilerrrr" },
       { type: "punctuation", value: ";" },
@@ -26,7 +26,7 @@ const stringTestCases = [
     source: 'let str="compilerrrr\'";',
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "str" },
+      { type: "identifier", value: "str" },
       { type: "operator", value: "=" },
       { type: "string", value: "compilerrrr'" },
       { type: "punctuation", value: ";" },
@@ -37,7 +37,7 @@ const stringTestCases = [
     source: 'let str="compilerrrr\\"";',
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "str" },
+      { type: "identifier", value: "str" },
       { type: "operator", value: "=" },
       { type: "string", value: 'compilerrrr"' },
       { type: "punctuation", value: ";" },
@@ -48,7 +48,7 @@ const stringTestCases = [
     source: 'let str="compilerrrr 😍";',
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "str" },
+      { type: "identifier", value: "str" },
       { type: "operator", value: "=" },
       { type: "string", value: "compilerrrr 😍" },
       { type: "punctuation", value: ";" },

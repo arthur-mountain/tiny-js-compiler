@@ -4,7 +4,7 @@ const identifierTestCases = [
     source: "let x = 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },
@@ -15,7 +15,7 @@ const identifierTestCases = [
     source: "let _x = 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "_x" },
+      { type: "identifier", value: "_x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },
@@ -26,7 +26,7 @@ const identifierTestCases = [
     source: "let $x = 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "$x" },
+      { type: "identifier", value: "$x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },
@@ -37,7 +37,7 @@ const identifierTestCases = [
     source: "let x_ = 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x_" },
+      { type: "identifier", value: "x_" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },
@@ -48,7 +48,7 @@ const identifierTestCases = [
     source: "let x$ = 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x$" },
+      { type: "identifier", value: "x$" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },

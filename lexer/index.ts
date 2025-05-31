@@ -1,16 +1,13 @@
 export type TokenType =
   | { type: "keyword"; value: string }
-  | { type: "operator"; value: string }
-  | { type: "punctuation"; value: string }
+  | { type: "identifier"; value: string }
   | { type: "number"; value: string }
   | { type: "string"; value: string }
-  | { type: "name"; value: string }
-  | { type: "parenthesis"; value: string }
-  | { type: "bracket"; value: string }
-  | { type: "brace"; value: string }
-  | { type: "colon"; value: string }
-  | { type: "comma"; value: string }
-  | { type: "dot"; value: string }
+  | { type: "boolean"; value: string }
+  | { type: "null"; value: "null" }
+  | { type: "undefined"; value: "undefined" }
+  | { type: "operator"; value: string }
+  | { type: "punctuation"; value: string }
   | { type: "comment"; value: string };
 
 const keywords = new Set([
@@ -20,8 +17,6 @@ const keywords = new Set([
   "function",
   "async",
   "await",
-  "true",
-  "false",
   "if",
   "else",
   "return",
@@ -46,14 +41,20 @@ const keywords = new Set([
   "in",
   "delete",
 ]);
-const punctuations = new Set([";"]);
-const colons = new Set([":"]);
-const commas = new Set([","]);
-const dots = new Set(["."]);
+const booleans = new Set(["true", "false"]);
+const punctuations = new Set([
+  "(",
+  ")",
+  "[",
+  "]",
+  "{",
+  "}",
+  ":",
+  ",",
+  ".",
+  ";",
+]);
 const operators = new Set(["+", "-", "*", "/", "=", ">", "<", "!"]);
-const parenthesis = new Set(["(", ")"]);
-const brackets = new Set(["[", "]"]);
-const braces = new Set(["{", "}"]);
 
 const tokenlizer = (sourceCode: string) => {
   const tokens: TokenType[] = [];
@@ -90,8 +91,14 @@ const tokenlizer = (sourceCode: string) => {
 
       if (keywords.has(value)) {
         tokens.push({ type: "keyword", value });
+      } else if (value === "true" || value === "false") {
+        tokens.push({ type: "boolean", value });
+      } else if (value === "null") {
+        tokens.push({ type: "null", value });
+      } else if (value === "undefined") {
+        tokens.push({ type: "undefined", value });
       } else {
-        tokens.push({ type: "name", value });
+        tokens.push({ type: "identifier", value });
       }
 
       continue;
@@ -290,51 +297,9 @@ const tokenlizer = (sourceCode: string) => {
       continue;
     }
 
-    // 小括號
-    if (parenthesis.has(char)) {
-      tokens.push({ type: "parenthesis", value: char });
-      next();
-      continue;
-    }
-
-    // 中括號
-    if (brackets.has(char)) {
-      tokens.push({ type: "bracket", value: char });
-      next();
-      continue;
-    }
-
-    // 大括號
-    if (braces.has(char)) {
-      tokens.push({ type: "brace", value: char });
-      next();
-      continue;
-    }
-
-    // punctuation
+    // 處理標點符號
     if (punctuations.has(char)) {
       tokens.push({ type: "punctuation", value: char });
-      next();
-      continue;
-    }
-
-    // colon
-    if (colons.has(char)) {
-      tokens.push({ type: "colon", value: char });
-      next();
-      continue;
-    }
-
-    // comma
-    if (commas.has(char)) {
-      tokens.push({ type: "comma", value: char });
-      next();
-      continue;
-    }
-
-    // dot
-    if (dots.has(char)) {
-      tokens.push({ type: "dot", value: char });
       next();
       continue;
     }

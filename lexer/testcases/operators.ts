@@ -4,7 +4,7 @@ const operatorTestCases = [
     source: "let x = 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "punctuation", value: ";" },
@@ -15,7 +15,7 @@ const operatorTestCases = [
     source: "let x = 5 == 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: "==" },
@@ -28,7 +28,7 @@ const operatorTestCases = [
     source: "let x = 5 === 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: "===" },
@@ -41,7 +41,7 @@ const operatorTestCases = [
     source: "let x = 5 > 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: ">" },
@@ -54,7 +54,7 @@ const operatorTestCases = [
     source: "let x = 5 >> 1;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: ">>" },
@@ -67,7 +67,7 @@ const operatorTestCases = [
     source: "let x = 5 >>> 1;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: ">>>" },
@@ -80,7 +80,7 @@ const operatorTestCases = [
     source: "let x = 5 >= 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: ">=" },
@@ -93,7 +93,7 @@ const operatorTestCases = [
     source: "let x = 5 < 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: "<" },
@@ -106,7 +106,7 @@ const operatorTestCases = [
     source: "let x = 5 << 1;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: "<<" },
@@ -119,7 +119,7 @@ const operatorTestCases = [
     source: "let x = 5 <<< 1;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: "<<<" },
@@ -132,7 +132,7 @@ const operatorTestCases = [
     source: "let x = 5 <= 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: "<=" },
@@ -145,7 +145,7 @@ const operatorTestCases = [
     source: "let x = !5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "operator", value: "!" },
       { type: "number", value: "5" },
@@ -157,7 +157,7 @@ const operatorTestCases = [
     source: "let x = 5 != 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: "!=" },
@@ -170,7 +170,7 @@ const operatorTestCases = [
     source: "let x = 5 !== 5;",
     expect: [
       { type: "keyword", value: "let" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "operator", value: "=" },
       { type: "number", value: "5" },
       { type: "operator", value: "!==" },

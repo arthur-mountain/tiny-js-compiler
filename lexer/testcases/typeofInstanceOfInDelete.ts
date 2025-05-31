@@ -4,7 +4,7 @@ const typeofInstanceofInDeleteTestCases = [
     source: "typeof x;",
     expect: [
       { type: "keyword", value: "typeof" },
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "punctuation", value: ";" },
     ],
   },
@@ -12,9 +12,9 @@ const typeofInstanceofInDeleteTestCases = [
     description: "instanceof 運算子",
     source: "x instanceof Array;",
     expect: [
-      { type: "name", value: "x" },
+      { type: "identifier", value: "x" },
       { type: "keyword", value: "instanceof" },
-      { type: "name", value: "Array" },
+      { type: "identifier", value: "Array" },
       { type: "punctuation", value: ";" },
     ],
   },
@@ -24,7 +24,7 @@ const typeofInstanceofInDeleteTestCases = [
     expect: [
       { type: "string", value: "prop" },
       { type: "keyword", value: "in" },
-      { type: "name", value: "obj" },
+      { type: "identifier", value: "obj" },
       { type: "punctuation", value: ";" },
     ],
   },
@@ -33,9 +33,9 @@ const typeofInstanceofInDeleteTestCases = [
     source: "delete obj.prop;",
     expect: [
       { type: "keyword", value: "delete" },
-      { type: "name", value: "obj" },
-      { type: "dot", value: "." },
-      { type: "name", value: "prop" },
+      { type: "identifier", value: "obj" },
+      { type: "punctuation", value: "." },
+      { type: "identifier", value: "prop" },
       { type: "punctuation", value: ";" },
     ],
   },
