@@ -30,7 +30,11 @@ type BinaryExpression = {
   right: Expression;
 };
 
-type Statement = VariableDeclaration | FunctionStatement | ExpressionStatement;
+type Statement =
+  | VariableDeclaration
+  | FunctionStatement
+  | ReturnStatement
+  | ExpressionStatement;
 
 type VariableDeclaration = {
   type: "VariableDeclaration";
@@ -43,8 +47,22 @@ type VariableDeclaration = {
 };
 
 type FunctionStatement = {
-  type: "ExpressionStatement";
-  expression: Expression;
+  type: "FunctionDeclaration";
+  id: Identifier;
+  params: Identifier[];
+  body: {
+    type: "BlockStatement";
+    body: ReturnStatement[];
+  };
+};
+
+type ReturnStatement = {
+  type: "ReturnStatement";
+  argument: {
+    type: "Literal";
+    value: string;
+    raw: string;
+  };
 };
 
 type ExpressionStatement = {
@@ -98,9 +116,28 @@ const parser = (tokens: TokenType[]) => {
     return { type: "VariableDeclaration", kind, declarations };
   };
 
+  // example:
+  //  - let x = 5;
+  //  - let x = 5, y = 5;
+  //  Operator UnSupported:
+  //  - let x = 5 + 10; UnSupported yet(BinaryExpression)
+  //  - let x = (5 + 10) + 10; UnSupported yet(Priority of brace)
+  //  - let x = y + 5; UnSupported yet(Identifier BinaryExpression)
+
+  const precedence: Record<string, number> = {
+    "==": 1,
+    "!=": 1,
+    "<": 2,
+    ">": 2,
+    "+": 3,
+    "-": 3,
+    "*": 4,
+    "/": 4,
+  };
   const parseVariableDeclaratorExpression = (): Expression => {
     const token = peek();
 
+    // FIXME: 不能直接 return ，因為有可能是 BinaryExpression
     if (token.type === "number") {
       next();
       return { type: "NumberLiteral", value: token.value };
@@ -116,9 +153,47 @@ const parser = (tokens: TokenType[]) => {
       return { type: "BooleanLiteral", value: token.value };
     }
 
+    if (token.type === "identifier") {
+      next();
+      // TODO: CallExpression or BinaryExpression or precedence brace
+      if (peek().type === "punctuation" && peek().value === "(") {
+      }
+      // TODO: BinaryExpression
+      if (peek().type === "operator") {
+      }
+    }
+
     throw new Error(
-      `Unknown expression starting with token ${token.type} ${token.value}`,
+      `Unknown expression starting with token '${token.type}' '${token.value}'`,
     );
+  };
+
+  const parseFunctionDeclaration = (): FunctionStatement => {
+    eat("keyword", "function");
+    const name = eat("identifier").value;
+    eat("punctuation", "(");
+
+    const params: Identifier[] = [];
+    while (true) {
+      params.push({ type: "Identifier", name: eat("identifier").value });
+      if (eat("punctuation").value === ")") {
+        break;
+      }
+    }
+
+    const blockStatementBody: FunctionStatement["body"]["body"] = [];
+    eat("punctuation", "{");
+    eat("punctuation", "}");
+
+    return {
+      type: "FunctionDeclaration",
+      id: { type: "Identifier", name },
+      params,
+      body: {
+        type: "BlockStatement",
+        body: blockStatementBody,
+      },
+    };
   };
 
   const declarators = new Set(["var", "let", "const"]);
@@ -129,12 +204,12 @@ const parser = (tokens: TokenType[]) => {
       if (declarators.has(token.value)) {
         return parseVariableDeclaration();
       } else if (token.value === "function") {
-        // return parseFunctionDeclaration();
+        return parseFunctionDeclaration();
       }
     }
 
     throw new Error(
-      `UnSupported statement with token ${token.type} ${token.value}`,
+      `UnSupported statement with token '${token.type}' '${token.value}'`,
     );
   };
 
