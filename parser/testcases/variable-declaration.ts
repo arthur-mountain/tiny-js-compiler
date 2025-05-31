@@ -118,6 +118,33 @@ const variableDeclarationTestCases = [
       },
     ],
   },
+  {
+    description: "初始化多個 expressions",
+    source: "const x = 5, y = 10, z = 15;",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "y" },
+            init: { type: "NumberLiteral", value: "10" },
+          },
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "z" },
+            init: { type: "NumberLiteral", value: "15" },
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export { variableDeclarationTestCases };

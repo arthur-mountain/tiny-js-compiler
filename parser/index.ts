@@ -55,8 +55,8 @@ type ExpressionStatement = {
 const parser = (tokens: TokenType[]) => {
   let i = 0;
 
-  const current = (): TokenType => {
-    return tokens[i];
+  const peek = (pos: number = i): TokenType => {
+    return tokens[pos];
   };
 
   const next = (count: number = 1) => {
@@ -64,7 +64,7 @@ const parser = (tokens: TokenType[]) => {
   };
 
   const eat = (type: TokenType["type"], value?: string): TokenType => {
-    const token = current();
+    const token = peek();
     if (token.type !== type || (value && token.value !== value)) {
       throw new Error(
         `Unexpected token ${token.type}(${token.value}), expected ${type} ${value ?? ""}`,
@@ -76,8 +76,13 @@ const parser = (tokens: TokenType[]) => {
 
   const parseVariableDeclaration = (): VariableDeclaration => {
     const kind = eat("keyword").value as VariableDeclaration["kind"];
+
+    if (peek().type !== "identifier") {
+      throw new Error("Variable name is missing");
+    }
+
     const declarations: VariableDeclaration["declarations"] = [];
-    while (current().type === "identifier") {
+    while (peek().type === "identifier") {
       const id = eat("identifier");
       eat("operator", "=");
       const init = parsePrimaryExpression();
@@ -86,17 +91,15 @@ const parser = (tokens: TokenType[]) => {
         id: { type: "Identifier", name: id.value },
         init,
       });
+      if (eat("punctuation").value === ";") {
+        break;
+      }
     }
-    eat("punctuation", ";");
-    return {
-      type: "VariableDeclaration",
-      kind,
-      declarations,
-    };
+    return { type: "VariableDeclaration", kind, declarations };
   };
 
   const parsePrimaryExpression = (): Expression => {
-    const token = current();
+    const token = peek();
 
     if (token.type === "number") {
       next();
@@ -118,11 +121,9 @@ const parser = (tokens: TokenType[]) => {
     );
   };
 
-  // const parseFunctionDeclaration = (): Expression => {};
-
   const declarators = new Set(["var", "let", "const"]);
   const parseStatement = (): Statement => {
-    const token = current();
+    const token = peek();
 
     if (token.type === "keyword") {
       if (declarators.has(token.value)) {
@@ -141,7 +142,6 @@ const parser = (tokens: TokenType[]) => {
   while (i < tokens.length) {
     body.push(parseStatement());
   }
-
   return { type: "Program", body } satisfies AST;
 };
 

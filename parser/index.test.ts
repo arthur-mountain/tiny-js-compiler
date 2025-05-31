@@ -14,6 +14,7 @@ for (const { description, source, expect } of testcases) {
     console.error(`❌ Failed     : "${source}"`);
     console.error(`❌ Description: "${description}"`);
     console.error(`❌ Reason     : "${error}"`);
+    console.error(error);
   }
 }
 
