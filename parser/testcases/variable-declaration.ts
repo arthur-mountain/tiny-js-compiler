@@ -5,8 +5,14 @@ const variableDeclarationTestCases = [
     expect: [
       {
         type: "VariableDeclaration",
-        id: { type: "Identifier", name: "x" },
-        init: { type: "NumberLiteral", value: "5" },
+        kind: "let",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
       },
     ],
   },
@@ -16,8 +22,14 @@ const variableDeclarationTestCases = [
     expect: [
       {
         type: "VariableDeclaration",
-        id: { type: "Identifier", name: "_x" },
-        init: { type: "NumberLiteral", value: "5" },
+        kind: "let",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "_x" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
       },
     ],
   },
@@ -27,8 +39,14 @@ const variableDeclarationTestCases = [
     expect: [
       {
         type: "VariableDeclaration",
-        id: { type: "Identifier", name: "$x" },
-        init: { type: "NumberLiteral", value: "5" },
+        kind: "let",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "$x" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
       },
     ],
   },
@@ -38,8 +56,14 @@ const variableDeclarationTestCases = [
     expect: [
       {
         type: "VariableDeclaration",
-        id: { type: "Identifier", name: "x_" },
-        init: { type: "NumberLiteral", value: "5" },
+        kind: "let",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x_" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
       },
     ],
   },
@@ -49,8 +73,48 @@ const variableDeclarationTestCases = [
     expect: [
       {
         type: "VariableDeclaration",
-        id: { type: "Identifier", name: "x$" },
-        init: { type: "NumberLiteral", value: "5" },
+        kind: "let",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x$" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    description: "var 變數名稱",
+    source: "var x = 5;",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "var",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    description: "const 變數名稱",
+    source: "const x = 5;",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
       },
     ],
   },

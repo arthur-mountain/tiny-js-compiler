@@ -5,14 +5,13 @@ type AST = {
   body: Statement[];
 };
 
-type Statement = VariableDeclaration | ExpressionStatement;
-
 type Expression =
   | NumberLiteral
   | StringLiteral
   | BooleanLiteral
   | Identifier
-  | CallExpression;
+  | CallExpression
+  | BinaryExpression;
 
 type NumberLiteral = { type: "NumberLiteral"; value: string };
 type StringLiteral = { type: "StringLiteral"; value: string };
@@ -24,18 +23,34 @@ type CallExpression = {
   arguments: Expression[];
 };
 
+type BinaryExpression = {
+  type: "BinaryExpression";
+  operator: string;
+  left: Expression;
+  right: Expression;
+};
+
+type Statement = VariableDeclaration | FunctionStatement | ExpressionStatement;
+
 type VariableDeclaration = {
   type: "VariableDeclaration";
-  id: Identifier;
-  init: Expression;
+  kind: "var" | "let" | "const";
+  declarations: {
+    type: "VariableDeclarator";
+    id: Identifier;
+    init: Expression;
+  }[];
+};
+
+type FunctionStatement = {
+  type: "ExpressionStatement";
+  expression: Expression;
 };
 
 type ExpressionStatement = {
   type: "ExpressionStatement";
   expression: Expression;
 };
-
-const declarators = new Set(["var", "let", "const"]);
 
 const parser = (tokens: TokenType[]) => {
   let i = 0;
@@ -60,19 +75,27 @@ const parser = (tokens: TokenType[]) => {
   };
 
   const parseVariableDeclaration = (): VariableDeclaration => {
-    eat("keyword", "let");
-    const id = eat("identifier");
-    eat("operator", "=");
-    const init = parseExpression();
+    const kind = eat("keyword").value as VariableDeclaration["kind"];
+    const declarations: VariableDeclaration["declarations"] = [];
+    while (current().type === "identifier") {
+      const id = eat("identifier");
+      eat("operator", "=");
+      const init = parsePrimaryExpression();
+      declarations.push({
+        type: "VariableDeclarator",
+        id: { type: "Identifier", name: id.value },
+        init,
+      });
+    }
     eat("punctuation", ";");
     return {
       type: "VariableDeclaration",
-      id: { type: "Identifier", name: id.value },
-      init,
+      kind,
+      declarations,
     };
   };
 
-  const parseExpression = (): Expression => {
+  const parsePrimaryExpression = (): Expression => {
     const token = current();
 
     if (token.type === "number") {
@@ -90,48 +113,28 @@ const parser = (tokens: TokenType[]) => {
       return { type: "BooleanLiteral", value: token.value };
     }
 
-    if (token.type === "identifier") {
-      const id = eat("identifier");
-
-      if (current().type === "punctuation" && current().value === "(") {
-        // parse CallExpression
-        eat("punctuation", "(");
-        const args: Expression[] = [];
-
-        while (current().value !== ")") {
-          args.push(parseExpression());
-          if (current().value === ",") {
-            eat("punctuation", ",");
-          }
-        }
-
-        eat("punctuation", ")");
-        return {
-          type: "CallExpression",
-          callee: { type: "Identifier", name: id.value },
-          arguments: args,
-        };
-      }
-
-      return { type: "Identifier", name: id.value };
-    }
-
     throw new Error(
       `Unknown expression starting with token ${token.type} ${token.value}`,
     );
   };
 
+  // const parseFunctionDeclaration = (): Expression => {};
+
+  const declarators = new Set(["var", "let", "const"]);
   const parseStatement = (): Statement => {
     const token = current();
 
-    if (token.type === "keyword" && declarators.has(token.value)) {
-      return parseVariableDeclaration();
+    if (token.type === "keyword") {
+      if (declarators.has(token.value)) {
+        return parseVariableDeclaration();
+      } else if (token.value === "function") {
+        // return parseFunctionDeclaration();
+      }
     }
 
-    // fallback: assume it's an expression statement
-    const expr = parseExpression();
-    eat("punctuation", ";");
-    return { type: "ExpressionStatement", expression: expr };
+    throw new Error(
+      `UnSupported statement with token ${token.type} ${token.value}`,
+    );
   };
 
   const body: Statement[] = [];
@@ -139,7 +142,7 @@ const parser = (tokens: TokenType[]) => {
     body.push(parseStatement());
   }
 
-  return { type: "Program", body };
+  return { type: "Program", body } satisfies AST;
 };
 
 export default parser;
