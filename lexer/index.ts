@@ -67,13 +67,16 @@ const tokenlizer = (sourceCode: string) => {
     i += code > 0xffff ? 2 : 1; // 如果超過「surrogate pair」代理對，就會用到兩個 code units，否則會是 1 個;
     return char;
   };
+  const next = (count: number = 1) => {
+    i += count;
+  };
 
   while (i < sourceCode.length) {
     const char = peekChar(i);
 
     // 跳過空白字元
     if (/\s/.test(char)) {
-      eatChar();
+      next();
       continue;
     }
 
@@ -115,7 +118,7 @@ const tokenlizer = (sourceCode: string) => {
     // 字串(單/雙引號，含跳脫字元處理)
     if (char === '"' || char === "'") {
       const quoteType = char;
-      eatChar(); // 跳過起始引號
+      next(); // 跳過起始引號
       let value = "";
 
       while (i < sourceCode.length) {
@@ -123,7 +126,7 @@ const tokenlizer = (sourceCode: string) => {
 
         if (currentChar === "\\") {
           // 跳過跳脫字元，取得下一個 char 進行判斷，避免類似這樣的 "abc\"
-          eatChar();
+          next();
           const nextChar = peekChar(i);
           if (nextChar === undefined) {
             throw new TypeError("Unexpected end after escape character");
@@ -141,7 +144,7 @@ const tokenlizer = (sourceCode: string) => {
       }
 
       if (peekChar(i) === quoteType) {
-        eatChar(); // 跳過結尾引號
+        next(); // 跳過結尾引號
         tokens.push({ type: "string", value });
       } else {
         throw new TypeError("Unterminated string literal");
@@ -155,117 +158,95 @@ const tokenlizer = (sourceCode: string) => {
       if (char === "=") {
         if (peekChar(i + 1) === "=" && peekChar(i + 2) === "=") {
           tokens.push({ type: "operator", value: "===" });
-          eatChar();
-          eatChar();
-          eatChar();
+          next(3);
           continue;
         } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "==" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         } else if (peekChar(i + 1) === ">") {
           tokens.push({ type: "operator", value: "=>" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         }
       } else if (char === ">") {
         if (peekChar(i + 1) === ">" && peekChar(i + 2) === ">") {
           tokens.push({ type: "operator", value: ">>>" });
-          eatChar();
-          eatChar();
-          eatChar();
+
+          next(3);
           continue;
         } else if (peekChar(i + 1) === ">") {
           tokens.push({ type: "operator", value: ">>" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: ">=" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         }
       } else if (char === "<") {
         if (peekChar(i + 1) === "<" && peekChar(i + 2) === "<") {
           tokens.push({ type: "operator", value: "<<<" });
-          eatChar();
-          eatChar();
-          eatChar();
+          next(3);
           continue;
         } else if (peekChar(i + 1) === "<") {
           tokens.push({ type: "operator", value: "<<" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "<=" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         }
       } else if (char === "!") {
         if (peekChar(i + 1) === "=" && peekChar(i + 2) === "=") {
           tokens.push({ type: "operator", value: "!==" });
-          eatChar();
-          eatChar();
-          eatChar();
+          next(3);
           continue;
         } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "!=" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         }
       } else if (char === "+") {
         if (peekChar(i + 1) === "+") {
           tokens.push({ type: "operator", value: "++" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "+=" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         }
       } else if (char === "-") {
         if (peekChar(i + 1) === "-") {
           tokens.push({ type: "operator", value: "--" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "-=" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         }
       } else if (char === "*") {
         if (peekChar(i + 1) === "*") {
           tokens.push({ type: "operator", value: "**" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         } else if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "*=" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         }
       } else if (char === "/") {
         if (peekChar(i + 1) === "=") {
           tokens.push({ type: "operator", value: "/=" });
-          eatChar();
-          eatChar();
+          next(2);
           continue;
         } else if (peekChar(i + 1) === "/") {
           // single line comment
           // 吃掉兩次 chars，跳過 "//"
-          eatChar();
-          eatChar();
+          next(2);
           let value = "";
 
           while (i < sourceCode.length && peekChar(i) !== "\n") {
@@ -305,56 +286,56 @@ const tokenlizer = (sourceCode: string) => {
       }
 
       tokens.push({ type: "operator", value: char });
-      eatChar();
+      next();
       continue;
     }
 
     // 小括號
     if (parenthesis.has(char)) {
       tokens.push({ type: "parenthesis", value: char });
-      eatChar();
+      next();
       continue;
     }
 
     // 中括號
     if (brackets.has(char)) {
       tokens.push({ type: "bracket", value: char });
-      eatChar();
+      next();
       continue;
     }
 
     // 大括號
     if (braces.has(char)) {
       tokens.push({ type: "brace", value: char });
-      eatChar();
+      next();
       continue;
     }
 
     // punctuation
     if (punctuations.has(char)) {
       tokens.push({ type: "punctuation", value: char });
-      eatChar();
+      next();
       continue;
     }
 
     // colon
     if (colons.has(char)) {
       tokens.push({ type: "colon", value: char });
-      eatChar();
+      next();
       continue;
     }
 
     // comma
     if (commas.has(char)) {
       tokens.push({ type: "comma", value: char });
-      eatChar();
+      next();
       continue;
     }
 
     // dot
     if (dots.has(char)) {
       tokens.push({ type: "dot", value: char });
-      eatChar();
+      next();
       continue;
     }
 
