@@ -85,7 +85,7 @@ const parser = (tokens: TokenType[]) => {
     while (peek().type === "identifier") {
       const id = eat("identifier");
       eat("operator", "=");
-      const init = parsePrimaryExpression();
+      const init = parseVariableDeclaratorExpression();
       declarations.push({
         type: "VariableDeclarator",
         id: { type: "Identifier", name: id.value },
@@ -98,7 +98,7 @@ const parser = (tokens: TokenType[]) => {
     return { type: "VariableDeclaration", kind, declarations };
   };
 
-  const parsePrimaryExpression = (): Expression => {
+  const parseVariableDeclaratorExpression = (): Expression => {
     const token = peek();
 
     if (token.type === "number") {
