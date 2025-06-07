@@ -36,8 +36,10 @@ type Statement =
   | FunctionDeclaration
   | ReturnStatement
   | WhileStatement
+  | ForStatement
   | ExpressionStatement
-  | IfStatement;
+  | IfStatement
+  | SwitchStatement;
 
 type VariableDeclaration = {
   type: "VariableDeclaration";
@@ -77,6 +79,26 @@ type IfStatement = {
   test: Expression;
   consequent: BlockStatement;
   alternate?: BlockStatement | IfStatement;
+};
+
+type SwitchStatement = {
+  type: "SwitchStatement";
+  discriminant: Expression;
+  cases: SwitchCase[];
+};
+
+type SwitchCase = {
+  type: "SwitchCase";
+  test?: Expression; // undefined 代表 default case
+  consequent: Statement[];
+};
+
+type ForStatement = {
+  type: "ForStatement";
+  init?: VariableDeclaration | Expression | null;
+  test?: Expression | null;
+  update?: Expression | null;
+  body: BlockStatement;
 };
 
 type ExpressionStatement = {
@@ -296,6 +318,14 @@ const parser = (tokens: TokenType[]) => {
     return { type: "IfStatement", test, consequent, alternate };
   };
 
+  const parseSwitchStatement = (): SwitchStatement => {
+    throw new Error("Not implemented");
+  };
+
+  const parseForStatement = (): ForStatement => {
+    throw new Error("Not implemented");
+  };
+
   const declarators = new Set(["var", "let", "const"]);
   const parseStatement = (): Statement => {
     const token = peek();
@@ -309,8 +339,12 @@ const parser = (tokens: TokenType[]) => {
         return parseReturnStatement();
       } else if (token.value === "while") {
         return parseWhileStatement();
+      } else if (token.value === "for") {
+        return parseForStatement();
       } else if (token.value === "if") {
         return parseIfStatement();
+      } else if (token.value === "switch") {
+        return parseSwitchStatement();
       }
     }
 
