@@ -1,4 +1,4 @@
-import type { TokenType } from "../lexer";
+import type { TokenType } from "../../lexer";
 
 // Program
 export type Program = {
