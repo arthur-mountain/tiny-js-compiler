@@ -34,7 +34,8 @@ type Statement =
   | VariableDeclaration
   | FunctionStatement
   | ReturnStatement
-  | ExpressionStatement;
+  | ExpressionStatement
+  | WhileStatement;
 
 type VariableDeclaration = {
   type: "VariableDeclaration";
@@ -68,6 +69,15 @@ type ReturnStatement = {
 type ExpressionStatement = {
   type: "ExpressionStatement";
   expression: Expression;
+};
+
+type WhileStatement = {
+  type: "WhileStatement";
+  test: Expression;
+  body: {
+    type: "BlockStatement";
+    body: Statement[];
+  };
 };
 
 const parser = (tokens: TokenType[]) => {
@@ -208,11 +218,57 @@ const parser = (tokens: TokenType[]) => {
         id: { type: "Identifier", name: id.value },
         init,
       });
-      if (eat("punctuation").value === ";") {
+      if (peek().value === ";") {
+        eat("punctuation", ";");
         break;
       }
+      eat("punctuation", ",");
     }
     return { type: "VariableDeclaration", kind, declarations };
+  };
+
+  const parseReturnStatement = (): ReturnStatement => {
+    eat("keyword", "return");
+
+    const argument = parseExpression(0);
+
+    eat("punctuation", ";");
+
+    return {
+      type: "ReturnStatement",
+      argument: {
+        type: "Literal",
+        value:
+          argument.type === "StringLiteral"
+            ? argument.value
+            : argument.type === "NumberLiteral"
+              ? argument.value
+              : argument.type === "BooleanLiteral"
+                ? argument.value
+                : "",
+        raw: tokens[i - 2].value, // 原始字串
+      },
+    };
+  };
+
+  const parseWhileStatement = (): Statement => {
+    eat("keyword", "while");
+    eat("punctuation", "(");
+    const test = parseExpression(0);
+    eat("punctuation", ")");
+
+    eat("punctuation", "{");
+    const body: Statement[] = [];
+    while (peek().value !== "}") {
+      body.push(parseStatement());
+    }
+    eat("punctuation", "}");
+
+    return {
+      type: "WhileStatement",
+      test,
+      body: { type: "BlockStatement", body },
+    };
   };
 
   const parseFunctionDeclaration = (): FunctionStatement => {
@@ -221,15 +277,20 @@ const parser = (tokens: TokenType[]) => {
     eat("punctuation", "(");
 
     const params: Identifier[] = [];
-    while (true) {
-      params.push({ type: "Identifier", name: eat("identifier").value });
-      if (eat("punctuation").value === ")") {
-        break;
-      }
+    if (peek().value !== ")") {
+      do {
+        params.push({ type: "Identifier", name: eat("identifier").value });
+        if (peek().value !== ",") break;
+        eat("punctuation", ",");
+      } while (true);
     }
+    eat("punctuation", ")");
 
-    const blockStatementBody: FunctionStatement["body"]["body"] = [];
     eat("punctuation", "{");
+    const blockStatementBody: ReturnStatement[] = [];
+    while (peek().value !== "}") {
+      blockStatementBody.push(parseReturnStatement());
+    }
     eat("punctuation", "}");
 
     return {
@@ -252,12 +313,19 @@ const parser = (tokens: TokenType[]) => {
         return parseVariableDeclaration();
       } else if (token.value === "function") {
         return parseFunctionDeclaration();
+      } else if (token.value === "return") {
+        return parseReturnStatement();
+      } else if (token.value === "while") {
+        return parseWhileStatement();
+      } else if (token.value === "if") {
+        return parseIfStatement();
       }
     }
 
-    throw new Error(
-      `UnSupported statement with token '${token.type}' '${token.value}'`,
-    );
+    // fallback: ExpressionStatement
+    const expr = parseExpression(0);
+    eat("punctuation", ";");
+    return { type: "ExpressionStatement", expression: expr };
   };
 
   const body: Statement[] = [];
