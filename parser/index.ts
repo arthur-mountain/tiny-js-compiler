@@ -108,9 +108,15 @@ const parser = (tokens: TokenType[]) => {
     "/": 4,
   };
 
-  const parseExpression = (minPrecedence: number = 0): Expression => {
-    let left = parsePrimaryExpression();
+  const parseExpression = (): Expression => {
+    const left = parsePrimaryExpression();
+    return parseBinaryExpression(left, 0);
+  };
 
+  const parseBinaryExpression = (
+    left: Expression,
+    minPrecedence: number = 0,
+  ) => {
     while (
       peek().type === "operator" &&
       precedence[peek().value] >= minPrecedence
@@ -122,17 +128,11 @@ const parser = (tokens: TokenType[]) => {
         peek().type === "operator" &&
         precedence[peek().value] > precedence[operator]
       ) {
-        right = parseExpression(precedence[peek().value]);
+        right = parseBinaryExpression(right, precedence[peek().value]);
       }
 
-      left = {
-        type: "BinaryExpression",
-        operator,
-        left,
-        right,
-      };
+      left = { type: "BinaryExpression", operator, left, right };
     }
-
     return left;
   };
 
@@ -162,7 +162,7 @@ const parser = (tokens: TokenType[]) => {
         const args: Expression[] = [];
         if (peek().value !== ")") {
           do {
-            args.push(parseExpression(0));
+            args.push(parseExpression());
             if (peek().value !== ",") break;
             eat("punctuation", ",");
           } while (true);
@@ -180,7 +180,7 @@ const parser = (tokens: TokenType[]) => {
 
     if (token.type === "punctuation" && token.value === "(") {
       eat("punctuation", "(");
-      const expr = parseExpression(0);
+      const expr = parseExpression();
       eat("punctuation", ")");
       return expr;
     }
@@ -197,7 +197,7 @@ const parser = (tokens: TokenType[]) => {
     do {
       const id = eat("identifier");
       eat("operator", "=");
-      const init = parseExpression(0);
+      const init = parseExpression();
 
       declarations.push({
         type: "VariableDeclarator",
@@ -241,7 +241,7 @@ const parser = (tokens: TokenType[]) => {
 
   const parseReturnStatement = (): ReturnStatement => {
     eat("keyword", "return");
-    const argument = parseExpression(0);
+    const argument = parseExpression();
     eat("punctuation", ";");
     return { type: "ReturnStatement", argument };
   };
@@ -249,7 +249,7 @@ const parser = (tokens: TokenType[]) => {
   const parseWhileStatement = (): WhileStatement => {
     eat("keyword", "while");
     eat("punctuation", "(");
-    const test = parseExpression(0);
+    const test = parseExpression();
     eat("punctuation", ")");
 
     const body = parseBlockStatement();
@@ -284,7 +284,7 @@ const parser = (tokens: TokenType[]) => {
     }
 
     // Fallback ExpressionStatement
-    const expr = parseExpression(0);
+    const expr = parseExpression();
     eat("punctuation", ";");
     return { type: "ExpressionStatement", expression: expr };
   };

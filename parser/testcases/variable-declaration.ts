@@ -145,6 +145,55 @@ const variableDeclarationTestCases = [
       },
     ],
   },
+  {
+    description: "Binary expression",
+    source: "const x = 5 + 15;",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: {
+              type: "BinaryExpression",
+              operator: "+",
+              left: { type: "NumberLiteral", value: "5" },
+              right: { type: "NumberLiteral", value: "15" },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    description: "Priority of binary expression",
+    source: "const x = 5 + 3 * 2;",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: {
+              type: "BinaryExpression",
+              operator: "+",
+              left: { type: "NumberLiteral", value: "5" },
+              right: {
+                type: "BinaryExpression",
+                operator: "*",
+                left: { type: "NumberLiteral", value: "3" },
+                right: { type: "NumberLiteral", value: "2" },
+              },
+            },
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export { variableDeclarationTestCases };
