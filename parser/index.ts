@@ -76,7 +76,7 @@ type IfStatement = {
   type: "IfStatement";
   test: Expression;
   consequent: BlockStatement;
-  alternate?: BlockStatement;
+  alternate?: BlockStatement | IfStatement;
 };
 
 type ExpressionStatement = {
@@ -280,18 +280,20 @@ const parser = (tokens: TokenType[]) => {
 
     const consequent = parseBlockStatement();
 
-    let alternate: BlockStatement | undefined;
+    let alternate: BlockStatement | IfStatement | undefined;
     if (peek() && peek().type === "keyword" && peek().value === "else") {
       eat("keyword", "else");
-      alternate = parseBlockStatement();
+
+      if (peek().type === "keyword" && peek().value === "if") {
+        // else if --> parse IfStatement recursively
+        alternate = parseIfStatement();
+      } else {
+        // else --> parse BlockStatement
+        alternate = parseBlockStatement();
+      }
     }
 
-    return {
-      type: "IfStatement",
-      test,
-      consequent,
-      alternate,
-    };
+    return { type: "IfStatement", test, consequent, alternate };
   };
 
   const declarators = new Set(["var", "let", "const"]);
