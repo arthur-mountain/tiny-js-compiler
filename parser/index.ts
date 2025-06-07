@@ -92,30 +92,6 @@ const parser = (tokens: TokenType[]) => {
     return token;
   };
 
-  const parseVariableDeclaration = (): VariableDeclaration => {
-    const kind = eat("keyword").value as VariableDeclaration["kind"];
-
-    if (peek().type !== "identifier") {
-      throw new Error("Variable name is missing");
-    }
-
-    const declarations: VariableDeclaration["declarations"] = [];
-    while (peek().type === "identifier") {
-      const id = eat("identifier");
-      eat("operator", "=");
-      const init = parseVariableDeclaratorExpression();
-      declarations.push({
-        type: "VariableDeclarator",
-        id: { type: "Identifier", name: id.value },
-        init,
-      });
-      if (eat("punctuation").value === ";") {
-        break;
-      }
-    }
-    return { type: "VariableDeclaration", kind, declarations };
-  };
-
   // example:
   //  - let x = 5;
   //  - let x = 5, y = 5;
@@ -134,10 +110,39 @@ const parser = (tokens: TokenType[]) => {
     "*": 4,
     "/": 4,
   };
-  const parseVariableDeclaratorExpression = (): Expression => {
+  const parseExpression = (minPrecedence: number): Expression => {
+    let left = parsePrimaryExpression();
+
+    while (
+      peek().type === "operator" &&
+      precedence[peek().value] >= minPrecedence
+    ) {
+      const operator = eat("operator").value;
+
+      let right = parsePrimaryExpression();
+
+      while (
+        peek().type === "operator" &&
+        precedence[peek().value] > precedence[operator]
+      ) {
+        right = parseExpression(precedence[peek().value]);
+      }
+
+      left = {
+        type: "BinaryExpression",
+        operator,
+        left,
+        right,
+      };
+    }
+
+    return left;
+  };
+
+  // 核心邏輯
+  const parsePrimaryExpression = (): Expression => {
     const token = peek();
 
-    // FIXME: 不能直接 return ，因為有可能是 BinaryExpression
     if (token.type === "number") {
       next();
       return { type: "NumberLiteral", value: token.value };
@@ -155,17 +160,59 @@ const parser = (tokens: TokenType[]) => {
 
     if (token.type === "identifier") {
       next();
-      // TODO: CallExpression or BinaryExpression or precedence brace
       if (peek().type === "punctuation" && peek().value === "(") {
+        eat("punctuation", "(");
+        const args: Expression[] = [];
+        if (peek().value !== ")") {
+          do {
+            args.push(parseExpression(0));
+            if (peek().value === ",") eat("punctuation", ",");
+          } while (peek().value !== ")");
+        }
+        eat("punctuation", ")");
+        return {
+          type: "CallExpression",
+          callee: { type: "Identifier", name: token.value },
+          arguments: args,
+        };
       }
-      // TODO: BinaryExpression
-      if (peek().type === "operator") {
-      }
+      return { type: "Identifier", name: token.value };
+    }
+
+    if (token.type === "punctuation" && token.value === "(") {
+      eat("punctuation", "(");
+      const expr = parseExpression(0);
+      eat("punctuation", ")");
+      return expr;
     }
 
     throw new Error(
-      `Unknown expression starting with token '${token.type}' '${token.value}'`,
+      `Unknown primary expression starting with token '${token.type}' '${token.value}'`,
     );
+  };
+
+  const parseVariableDeclaration = (): VariableDeclaration => {
+    const kind = eat("keyword").value as VariableDeclaration["kind"];
+
+    if (peek().type !== "identifier") {
+      throw new Error("Variable name is missing");
+    }
+
+    const declarations: VariableDeclaration["declarations"] = [];
+    while (peek().type === "identifier") {
+      const id = eat("identifier");
+      eat("operator", "=");
+      const init = parseExpression(0);
+      declarations.push({
+        type: "VariableDeclarator",
+        id: { type: "Identifier", name: id.value },
+        init,
+      });
+      if (eat("punctuation").value === ";") {
+        break;
+      }
+    }
+    return { type: "VariableDeclaration", kind, declarations };
   };
 
   const parseFunctionDeclaration = (): FunctionStatement => {
