@@ -36,7 +36,8 @@ type Statement =
   | FunctionDeclaration
   | ReturnStatement
   | WhileStatement
-  | ExpressionStatement;
+  | ExpressionStatement
+  | IfStatement;
 
 type VariableDeclaration = {
   type: "VariableDeclaration";
@@ -71,6 +72,13 @@ type WhileStatement = {
   body: BlockStatement;
 };
 
+type IfStatement = {
+  type: "IfStatement";
+  test: Expression;
+  consequent: BlockStatement;
+  alternate?: BlockStatement;
+};
+
 type ExpressionStatement = {
   type: "ExpressionStatement";
   expression: Expression;
@@ -82,10 +90,7 @@ const parser = (tokens: TokenType[]) => {
   let i = 0;
 
   const peek = (pos: number = i): TokenType => tokens[pos];
-  const next = (count: number = 1) => {
-    i += count;
-  };
-
+  const next = (count: number = 1) => (i += count);
   const eat = (type: TokenType["type"], value?: string): TokenType => {
     const token = peek();
     if (token.type !== type || (value && token.value !== value)) {
@@ -267,6 +272,28 @@ const parser = (tokens: TokenType[]) => {
     return { type: "BlockStatement", body };
   };
 
+  const parseIfStatement = (): IfStatement => {
+    eat("keyword", "if");
+    eat("punctuation", "(");
+    const test = parseExpression();
+    eat("punctuation", ")");
+
+    const consequent = parseBlockStatement();
+
+    let alternate: BlockStatement | undefined;
+    if (peek() && peek().type === "keyword" && peek().value === "else") {
+      eat("keyword", "else");
+      alternate = parseBlockStatement();
+    }
+
+    return {
+      type: "IfStatement",
+      test,
+      consequent,
+      alternate,
+    };
+  };
+
   const declarators = new Set(["var", "let", "const"]);
   const parseStatement = (): Statement => {
     const token = peek();
@@ -280,6 +307,8 @@ const parser = (tokens: TokenType[]) => {
         return parseReturnStatement();
       } else if (token.value === "while") {
         return parseWhileStatement();
+      } else if (token.value === "if") {
+        return parseIfStatement();
       }
     }
 
