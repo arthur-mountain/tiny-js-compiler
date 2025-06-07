@@ -194,6 +194,114 @@ const variableDeclarationTestCases = [
       },
     ],
   },
+  {
+    description: "Identifier reassign",
+    source: "const x = 5; let y = x;",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
+      },
+      {
+        type: "VariableDeclaration",
+        kind: "let",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "y" },
+            init: { type: "Identifier", name: "x" },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    description: "Identifier binary expression",
+    source: "const x = 5; let y = x + 5;",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: { type: "NumberLiteral", value: "5" },
+          },
+        ],
+      },
+      {
+        type: "VariableDeclaration",
+        kind: "let",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "y" },
+            init: {
+              type: "BinaryExpression",
+              operator: "+",
+              left: { type: "Identifier", name: "x" },
+              right: { type: "NumberLiteral", value: "5" },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    description: "Init with call expression",
+    source: "const x = test();",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: {
+              type: "CallExpression",
+              callee: { type: "Identifier", name: "test" },
+              arguments: [],
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    description: "Init with call expression and binary expression",
+    source: "const x = test() + 5;",
+    expect: [
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id: { type: "Identifier", name: "x" },
+            init: {
+              type: "BinaryExpression",
+              operator: "+",
+              left: {
+                type: "CallExpression",
+                callee: { type: "Identifier", name: "test" },
+                arguments: [],
+              },
+              right: { type: "NumberLiteral", value: "5" },
+            },
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export { variableDeclarationTestCases };
