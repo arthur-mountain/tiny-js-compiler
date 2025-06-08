@@ -34,12 +34,14 @@ type BinaryExpression = {
 type Statement =
   | VariableDeclaration
   | FunctionDeclaration
+  | BlockStatement
   | ReturnStatement
   | WhileStatement
   | ForStatement
   | ExpressionStatement
   | IfStatement
-  | SwitchStatement;
+  | SwitchStatement
+  | BreakStatement;
 
 type VariableDeclaration = {
   type: "VariableDeclaration";
@@ -99,6 +101,11 @@ type ForStatement = {
   test?: Expression | null;
   update?: Expression | null;
   body: BlockStatement;
+};
+
+type BreakStatement = {
+  type: "BreakStatement";
+  label: Expression | null;
 };
 
 type ExpressionStatement = {
@@ -318,8 +325,69 @@ const parser = (tokens: TokenType[]) => {
     return { type: "IfStatement", test, consequent, alternate };
   };
 
+  const parseBreakStatement = (): BreakStatement => {
+    eat("keyword", "break");
+    const label =
+      peek().type === "identifier" ? parsePrimaryExpression() : null;
+    eat("punctuation", ";");
+    return { type: "BreakStatement", label };
+  };
+
   const parseSwitchStatement = (): SwitchStatement => {
-    throw new Error("Not implemented");
+    eat("keyword", "switch");
+    eat("punctuation", "(");
+    const discriminant = parseExpression();
+    eat("punctuation", ")");
+    eat("punctuation", "{");
+
+    const cases: SwitchCase[] = [];
+    while (peek().type !== "punctuation" || peek().value !== "}") {
+      if (
+        peek().type === "keyword" &&
+        (peek().value === "case" || peek().value === "default")
+      ) {
+        let test: Expression | undefined;
+        if (peek().value === "case") {
+          eat("keyword", "case");
+          test = parseExpression();
+        } else {
+          eat("keyword", "default");
+        }
+        eat("punctuation", ":");
+
+        const consequent: Statement[] = [];
+        // 只在下一個 token 是 'case' or 'default' or '}' 才停
+        while (
+          !(
+            peek().type === "keyword" &&
+            (peek().value === "case" || peek().value === "default")
+          ) &&
+          !(peek().type === "punctuation" && peek().value === "}")
+        ) {
+          // 支援 BlockStatement 或單獨 Statement
+          if (peek().type === "punctuation" && peek().value === "{") {
+            consequent.push(parseBlockStatement());
+          } else {
+            consequent.push(parseStatement());
+          }
+
+          // 防止 infinite loop，如果已經到 switch 結尾
+          if (peek().type === "punctuation" && peek().value === "}") {
+            break;
+          }
+        }
+
+        cases.push({ type: "SwitchCase", test, consequent });
+      } else {
+        throw new Error(
+          `Unexpected token ${peek().type} (${peek().value}) in switch`,
+        );
+      }
+    }
+
+    eat("punctuation", "}"); // 關閉 switch
+
+    return { type: "SwitchStatement", discriminant, cases };
   };
 
   const parseForStatement = (): ForStatement => {
@@ -345,6 +413,8 @@ const parser = (tokens: TokenType[]) => {
         return parseIfStatement();
       } else if (token.value === "switch") {
         return parseSwitchStatement();
+      } else if (token.value === "break") {
+        return parseBreakStatement();
       }
     }
 
