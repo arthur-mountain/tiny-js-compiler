@@ -398,7 +398,38 @@ const parser = (tokens: TokenType[]) => {
   };
 
   const parseForStatement = (): ForStatement => {
-    throw new Error("Not implemented");
+    eat("keyword", "for");
+    eat("punctuation", "(");
+
+    // Parse init: let i = 0 或 i = 0 或 空
+    let init: VariableDeclaration | Expression | null = null;
+    if (peek().value !== ";") {
+      if (declarators.has(peek().value)) {
+        init = parseVariableDeclaration();
+      } else {
+        init = parseExpression();
+        eat("punctuation", ";");
+      }
+    } else {
+      eat("punctuation", ";");
+    }
+
+    // Parse test: i < 10 或空
+    let test: Expression | null = null;
+    if (peek().value !== ";") {
+      test = parseExpression();
+    }
+    eat("punctuation", ";");
+
+    // Parse update: i++ 或空
+    let update: Expression | null = null;
+    if (peek().value !== ")") {
+      update = parseExpression();
+    }
+    eat("punctuation", ")");
+
+    const body = parseStatementAsBlock();
+    return { type: "ForStatement", init, test, update, body };
   };
 
   const declarators = new Set(["var", "let", "const"]);
