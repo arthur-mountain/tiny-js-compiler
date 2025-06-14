@@ -1,9 +1,6 @@
 import type { TokenType } from "../lexer";
 
-type AST = {
-  type: "Program";
-  body: Statement[];
-};
+type AST = { type: "Program"; body: Statement[] };
 
 // Expression
 type Expression =
@@ -12,7 +9,9 @@ type Expression =
   | BooleanLiteral
   | Identifier
   | CallExpression
-  | BinaryExpression;
+  | BinaryExpression
+  | UnaryExpression
+  | UpdateExpression;
 
 type NumberLiteral = { type: "NumberLiteral"; value: string };
 type StringLiteral = { type: "StringLiteral"; value: string };
@@ -28,6 +27,29 @@ type BinaryExpression = {
   operator: string;
   left: Expression;
   right: Expression;
+};
+type UnaryOperator =
+  | "-"
+  | "+"
+  | "!"
+  | "~"
+  | "typeof"
+  | "void"
+  | "delete"
+  | "throw";
+type UnaryExpression = {
+  type: "UnaryExpression";
+  operator: UnaryOperator;
+  prefix: boolean;
+  argument: Expression;
+};
+
+type UpdateOperator = "++" | "--";
+type UpdateExpression = {
+  type: "UpdateExpression";
+  operator: UpdateOperator;
+  argument: Expression;
+  prefix: boolean;
 };
 
 // Statement
