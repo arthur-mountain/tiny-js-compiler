@@ -286,7 +286,7 @@ const parser = (tokens: TokenType[]) => {
     const test = parseExpression();
     eat("punctuation", ")");
 
-    const body = parseBlockStatement();
+    const body = parseStatementAsBlock();
     return { type: "WhileStatement", test, body };
   };
 
@@ -301,13 +301,20 @@ const parser = (tokens: TokenType[]) => {
     return { type: "BlockStatement", body };
   };
 
+  const parseStatementAsBlock = (): BlockStatement => {
+    if (peek().type === "punctuation" && peek().value === "{") {
+      return parseBlockStatement();
+    }
+    return { type: "BlockStatement", body: [parseStatement()] };
+  };
+
   const parseIfStatement = (): IfStatement => {
     eat("keyword", "if");
     eat("punctuation", "(");
     const test = parseExpression();
     eat("punctuation", ")");
 
-    const consequent = parseBlockStatement();
+    const consequent = parseStatementAsBlock();
 
     let alternate: BlockStatement | IfStatement | undefined;
     if (peek() && peek().type === "keyword" && peek().value === "else") {
@@ -318,7 +325,7 @@ const parser = (tokens: TokenType[]) => {
         alternate = parseIfStatement();
       } else {
         // else --> parse BlockStatement
-        alternate = parseBlockStatement();
+        alternate = parseStatementAsBlock();
       }
     }
 
