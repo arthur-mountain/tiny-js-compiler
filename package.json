@@ -11,9 +11,10 @@
   "type": "module",
   "main": "dist/compiler.js",
   "scripts": {
+    "dev": "tsc --watch",
+    "start": "node dist/compiler.js",
     "build": "tsc",
-    "dev:watch": "tsc --watch",
-    "start": "npm run build && node dist/compiler.js",
+    "build:start": "node run build && npm run start",
     "test:lexer": "node dist/lexer/index.test.js",
     "test:parser": "node dist/parser/index.test.js"
   },
