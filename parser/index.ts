@@ -195,6 +195,41 @@ const parser = (tokens: TokenType[]) => {
   const parsePrimaryExpression = (): Expression => {
     const token = peek();
 
+    // UnaryExpression: prefix-only (e.g., !x, -x, typeof x, etc.)
+    const unaryOperators = new Set([
+      "-",
+      "+",
+      "!",
+      "~",
+      "typeof",
+      "void",
+      "delete",
+      "throw",
+    ]);
+    if (token.type === "operator" && unaryOperators.has(token.value)) {
+      const operator = eat("operator").value as UnaryOperator;
+      const argument = parsePrimaryExpression();
+      return {
+        type: "UnaryExpression",
+        operator,
+        prefix: true,
+        argument,
+      };
+    }
+
+    // UpdateExpression: prefix (e.g., ++x, --x)
+    const updateOperators = new Set(["++", "--"]);
+    if (token.type === "operator" && updateOperators.has(token.value)) {
+      const operator = eat("operator").value as UpdateOperator;
+      const argument = parsePrimaryExpression();
+      return {
+        type: "UpdateExpression",
+        operator,
+        argument,
+        prefix: true,
+      };
+    }
+
     if (token.type === "number") {
       next();
       return { type: "NumberLiteral", value: token.value };
@@ -213,6 +248,7 @@ const parser = (tokens: TokenType[]) => {
     if (token.type === "identifier") {
       const id = eat("identifier");
 
+      // CallExpression
       if (peek().type === "punctuation" && peek().value === "(") {
         eat("punctuation", "(");
         const args: Expression[] = [];
@@ -228,6 +264,17 @@ const parser = (tokens: TokenType[]) => {
           type: "CallExpression",
           callee: { type: "Identifier", name: id.value },
           arguments: args,
+        };
+      }
+
+      // UpdateExpression: postfix (e.g., x++, x--)
+      if (peek().type === "operator" && updateOperators.has(peek().value)) {
+        const operator = eat("operator").value as UpdateOperator;
+        return {
+          type: "UpdateExpression",
+          operator,
+          argument: { type: "Identifier", name: id.value },
+          prefix: false,
         };
       }
 
@@ -475,6 +522,10 @@ const parser = (tokens: TokenType[]) => {
         return parseSwitchStatement();
       } else if (token.value === "break") {
         return parseBreakStatement();
+      } else {
+        throw new Error(
+          `Unexpected keyword '${token.value}' at statement level`,
+        );
       }
     }
 
