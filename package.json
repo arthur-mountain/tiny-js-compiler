@@ -14,7 +14,7 @@
     "dev": "tsc --watch",
     "start": "node dist/compiler.js",
     "build": "tsc",
-    "build:start": "node run build && npm run start",
+    "build:start": "npm run build && npm run start",
     "test:lexer": "node dist/lexer/index.test.js",
     "test:parser": "node dist/parser/index.test.js"
   },
